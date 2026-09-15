@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="1_LibraryClasses/1_LibraryClasses.csproj" />
+  <Project Path="2_LibraryUtils/2_LibraryUtils.csproj" />
+  <Project Path="3_LibraryServices/3_LibraryServices.csproj" />
   <Project Path="RESLibrariesNet10/RESLibrariesNet10.csproj" />
 </Solution>

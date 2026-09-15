@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>_3_LibraryServices</RootNamespace>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
+    <UseWindowsForms>false</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\1_LibraryClasses\1_LibraryClasses.csproj" />
     <ProjectReference Include="..\2_LibraryUtils\2_LibraryUtils.csproj" />
-    <ProjectReference Include="..\3_LibraryServices\3_LibraryServices.csproj" />
   </ItemGroup>
 
 </Project>
