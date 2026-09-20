@@ -1,145 +1,102 @@
-﻿using System;
-using _1_LibraryClassesNet10.Enums;
+﻿using _1_LibraryClassesNet10.Enums;
 
 namespace _1_LibraryClassesNet10.Interfaces
 {
     /// <summary>
-    /// Defines the contract for managing permission states using <see cref="E_Permissions"/>.
+    /// Defines a contract for managing a set of flag-based permissions using <see cref="E_Permissions"/>.
+    /// <para><i>[ES] Define un contrato para gestionar un conjunto de permisos basados en flags usando <see cref="E_Permissions"/>.</i></para>
     /// </summary>
-    /// <remarks xml:lang="es">
-    /// Define el contrato para la gestión de estados de permisos utilizando <see cref="E_Permissions"/>.
-    /// </remarks>
     /// <example>
     /// <code>
-    /// // Create an instance initialized with Read permission
-    /// // Crear una instancia inicializada con el permiso Read
-    /// I_Permissions perms = new C_Permissions(E_Permissions.Read);
-    /// 
-    /// // Grant Write permission
-    /// // Conceder el permiso Write
-    /// perms.Add(E_Permissions.Write);
-    /// 
-    /// // Check if Read permission is granted
-    /// // Verificar si el permiso Read está concedido
-    /// if (perms.Has(E_Permissions.Read))
+    /// I_Permissions perms = new C_Permissions(E_Permissions.READ);
+    /// perms.Add(E_Permissions.WRITE);
+    /// if (perms.Has(E_Permissions.READ))
     /// {
-    ///     // Perform authorized operation / Realizar operación autorizada
+    ///     // authorized work
     /// }
     /// </code>
     /// </example>
     public interface I_Permissions
     {
-        /// <summary>Gets the current set of assigned permissions.</summary>
-        /// <remarks xml:lang="es">Obtiene el conjunto actual de permisos asignados.</remarks>
+        /// <summary>
+        /// Gets the current set of assigned permission flags.
+        /// <para><i>[ES] Obtiene el conjunto actual de flags de permiso asignados.</i></para>
+        /// </summary>
         E_Permissions Value { get; }
 
         /// <summary>
-        /// Gets a value indicating whether no permissions are granted (<see cref="E_Permissions.None"/>). 
-        /// Returns <c>true</c> if no permissions are granted; otherwise, <c>false</c>.
+        /// Gets a value indicating whether no permissions are granted (<see cref="E_Permissions.NONE"/>).
+        /// <para><i>[ES] Indica si no hay permisos concedidos (<see cref="E_Permissions.NONE"/>).</i></para>
         /// </summary>
-        /// <remarks xml:lang="es">
-        /// Obtiene un valor que indica el estado de permisos. 
-        /// Devuelve <c>true</c> si no hay permisos concedidos; en caso contrario, <c>false</c>.
-        /// </remarks>
         bool HasNone { get; }
 
         /// <summary>
-        /// Gets a value indicating whether at least one permission is granted. 
-        /// Returns <c>true</c> if any permission is granted; otherwise, <c>false</c>.
+        /// Gets a value indicating whether at least one permission is granted.
+        /// <para><i>[ES] Indica si hay al menos un permiso concedido.</i></para>
         /// </summary>
-        /// <remarks xml:lang="es">
-        /// Obtiene un valor que indica si existe algún permiso asignado.
-        /// Devuelve <c>true</c> si al menos un permiso está concedido; en caso contrario, <c>false</c>.
-        /// </remarks>
         bool HasAny { get; }
 
         /// <summary>
-        /// Gets a value indicating whether all defined permissions (<see cref="E_Permissions.All"/>) are granted. 
-        /// Returns <c>true</c> if all permissions are granted; otherwise, <c>false</c>.
+        /// Gets a value indicating whether all defined permissions (<see cref="E_Permissions.ALL"/>) are granted.
+        /// <para><i>[ES] Indica si están concedidos todos los permisos definidos (<see cref="E_Permissions.ALL"/>).</i></para>
         /// </summary>
-        /// <remarks xml:lang="es">
-        /// Obtiene un valor que indica la presencia de la totalidad de permisos.
-        /// Devuelve <c>true</c> si todos los permisos están concedidos; en caso contrario, <c>false</c>.
-        /// </remarks>
         bool HasAll { get; }
 
-        /// <summary>Grants one or more permissions.</summary>
-        /// <remarks xml:lang="es">Concede uno o más permisos.</remarks>
-        /// <param name="permission">The permission(s) to grant.</param>
-        /// <example>
-        /// <code>
-        /// // Add Read and Write permissions simultaneously
-        /// // Agregar permisos de Read y Write simultáneamente
-        /// userPermissions.Add(E_Permissions.Read | E_Permissions.Write);
-        /// </code>
-        /// </example>
+        /// <summary>
+        /// Grants one or more permissions (bitwise OR).
+        /// <para><i>[ES] Concede uno o más permisos (OR bit a bit).</i></para>
+        /// </summary>
+        /// <param name="permission">The permission flag(s) to grant.</param>
         void Add(E_Permissions permission);
 
-        /// <summary>Safely revokes one or more permissions.</summary>
-        /// <remarks xml:lang="es">Revoca de forma segura uno o más permisos.</remarks>
-        /// <param name="permission">The permission(s) to revoke.</param>
-        /// <example>
-        /// <code>
-        /// // Remove Write permission safely
-        /// // Revocar el permiso Write de forma segura
-        /// userPermissions.Remove(E_Permissions.Write);
-        /// </code>
-        /// </example>
+        /// <summary>
+        /// Revokes one or more permissions (bitwise AND NOT).
+        /// <para><i>[ES] Revoca uno o más permisos (AND NOT bit a bit).</i></para>
+        /// </summary>
+        /// <param name="permission">The permission flag(s) to revoke.</param>
         void Remove(E_Permissions permission);
 
-        /// <summary>Toggles the state of one or more permissions.</summary>
-        /// <remarks xml:lang="es">Alterna el estado de uno o más permisos.</remarks>
-        /// <param name="permission">The permission(s) to toggle.</param>
-        /// <example>
-        /// <code>
-        /// // Invert the state of Execute permission (grants if missing, revokes if present)
-        /// // Invertir el estado del permiso Execute (concede si falta, revoca si existe)
-        /// userPermissions.Toggle(E_Permissions.Execute);
-        /// </code>
-        /// </example>
+        /// <summary>
+        /// Toggles one or more permissions (bitwise XOR).
+        /// <para><i>[ES] Alterna uno o más permisos (XOR bit a bit).</i></para>
+        /// </summary>
+        /// <param name="permission">The permission flag(s) to toggle.</param>
         void Toggle(E_Permissions permission);
 
-        /// <summary>Determines whether a specific permission is granted.</summary>
-        /// <remarks xml:lang="es">Determina si un permiso específico está concedido.</remarks>
-        /// <param name="permission">The permission to check.</param>
-        /// <returns><c>true</c> if the permission is granted; otherwise, <c>false</c>.</returns>
-        /// <example>
-        /// <code>
-        /// // Check if user has Write access
-        /// // Comprobar si el usuario tiene acceso de escritura
-        /// bool canWrite = perms.Has(E_Permissions.Write);
-        /// </code>
-        /// </example>
+        /// <summary>
+        /// Determines whether the specified permission flag(s) are granted.
+        /// <para>
+        /// For <see cref="E_Permissions.NONE"/>, returns the same as <see cref="HasNone"/>.
+        /// For other values, uses <see cref="Enum.HasFlag"/> (all bits in <paramref name="permission"/> must be set).
+        /// </para>
+        /// <para><i>[ES] Determina si el/los flag(s) indicados están concedidos.
+        /// Para <see cref="E_Permissions.NONE"/> equivale a <see cref="HasNone"/>.
+        /// En otro caso usa <see cref="Enum.HasFlag"/> (deben estar todos los bits de <paramref name="permission"/>).</i></para>
+        /// </summary>
+        /// <param name="permission">The permission flag(s) to check.</param>
+        /// <returns><see langword="true"/> if granted; otherwise, <see langword="false"/>.</returns>
         bool Has(E_Permissions permission);
 
-        /// <summary>Determines whether at least one of the specified permissions is granted.</summary>
-        /// <remarks xml:lang="es">Determina si al menos uno de los permisos especificados está concedido.</remarks>
-        /// <param name="permissions">The combined permissions to check.</param>
-        /// <returns><c>true</c> if any specified permission is present; otherwise, <c>false</c>.</returns>
-        /// <example>
-        /// <code>
-        /// // Verify if the user has either Read OR Execute permission
-        /// // Verificar si el usuario tiene permiso de Read O de Execute
-        /// bool canAccess = perms.HasAnyPermission(E_Permissions.Read | E_Permissions.Execute);
-        /// </code>
-        /// </example>
+        /// <summary>
+        /// Determines whether at least one of the specified permission bits is granted.
+        /// <para><i>[ES] Determina si al menos uno de los bits de permiso indicados está concedido.</i></para>
+        /// </summary>
+        /// <param name="permissions">The permission flags to test against.</param>
+        /// <returns><see langword="true"/> if any overlapping bit is set; otherwise, <see langword="false"/>.</returns>
         bool HasAnyPermission(E_Permissions permissions);
 
-        /// <summary>Determines whether all specified permissions are granted.</summary>
-        /// <remarks xml:lang="es">Determina si todos los permisos especificados están concedidos.</remarks>
-        /// <param name="permissions">The combined permissions to check.</param>
-        /// <returns><c>true</c> if all specified permissions are present; otherwise, <c>false</c>.</returns>
-        /// <example>
-        /// <code>
-        /// // Verify if the user has both Read AND Write permissions
-        /// // Verificar si el usuario tiene permisos de Read Y Write al mismo tiempo
-        /// bool isFullControl = perms.HasAllPermissions(E_Permissions.Read | E_Permissions.Write);
-        /// </code>
-        /// </example>
+        /// <summary>
+        /// Determines whether all of the specified permission bits are granted.
+        /// <para><i>[ES] Determina si todos los bits de permiso indicados están concedidos.</i></para>
+        /// </summary>
+        /// <param name="permissions">The permission flags that must all be present.</param>
+        /// <returns><see langword="true"/> if all specified bits are set; otherwise, <see langword="false"/>.</returns>
         bool HasAllPermissions(E_Permissions permissions);
 
-        /// <summary>Resets all assigned permissions to <see cref="E_Permissions.None"/>.</summary>
-        /// <remarks xml:lang="es">Restablece todos los permisos asignados a <see cref="E_Permissions.None"/>.</remarks>
+        /// <summary>
+        /// Resets all permissions to <see cref="E_Permissions.NONE"/>.
+        /// <para><i>[ES] Restablece todos los permisos a <see cref="E_Permissions.NONE"/>.</i></para>
+        /// </summary>
         void Clear();
     }
 }

@@ -1,14 +1,14 @@
 ﻿namespace _1_LibraryClassesNet10.Interfaces
 {
     /// <summary>
-    /// Defines a contract for domain entities that record a creation timestamp.
+    /// Defines a contract for domain register entities: identity, audit timestamps, and soft delete.
     /// <para>
-    /// Extends <see cref="I_Entity{TId}"/> with <see cref="CreateDate"/>.
-    /// Implementations should use UTC (e.g. <see cref="DateTime.UtcNow"/>).
+    /// Extends <see cref="I_Entity{TId}"/>, <see cref="I_Auditable"/>, and <see cref="I_SoftDeletable"/>.
+    /// All timestamps should use UTC.
     /// </para>
-    /// <para><i>[ES] Define un contrato para entidades de dominio que registran fecha de creación.
-    /// Extiende <see cref="I_Entity{TId}"/> con <see cref="CreateDate"/>.
-    /// Las implementaciones deberían usar UTC (p. ej. <see cref="DateTime.UtcNow"/>).</i></para>
+    /// <para><i>[ES] Define un contrato para entidades de registro de dominio: identidad, auditoría y borrado lógico.
+    /// Extiende <see cref="I_Entity{TId}"/>, <see cref="I_Auditable"/> e <see cref="I_SoftDeletable"/>.
+    /// Todas las marcas de tiempo deberían usar UTC.</i></para>
     /// </summary>
     /// <typeparam name="TId">
     /// The type of the unique identifier.
@@ -21,19 +21,13 @@
     ///     public string? Id { get; private set; }
     ///     public bool IsInitialized =&gt; !string.IsNullOrEmpty(Id);
     ///     public DateTime CreateDate { get; private set; }
+    ///     public DateTime? UpdateDate { get; private set; }
+    ///     public bool IsDeleted { get; private set; }
+    ///     public DateTime? DeleteDate { get; private set; }
     /// }
     /// </code>
     /// </example>
-    public interface I_Register<TId> : I_Entity<TId>
+    public interface I_Register<TId> : I_Entity<TId>, I_Auditable, I_SoftDeletable
     {
-        /// <summary>
-        /// Gets the UTC date and time when the entity was created.
-        /// <para><i>[ES] Obtiene la fecha y hora UTC de creación de la entidad.</i></para>
-        /// </summary>
-        /// <value>
-        /// The creation timestamp in UTC.
-        /// <para><i>[ES] La marca de tiempo de creación en UTC.</i></para>
-        /// </value>
-        DateTime CreateDate { get; }
     }
 }

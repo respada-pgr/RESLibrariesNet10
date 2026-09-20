@@ -3,12 +3,14 @@
 namespace _1_LibraryClassesNet10.Classes
 {
     /// <summary>
-    /// Abstract base for domain entities that record a creation timestamp.
+    /// Abstract base for domain register entities: identity, audit timestamps, and soft delete.
     /// <para>
-    /// Extends <see cref="C_Entity{TId}"/> and implements <see cref="I_Register{TId}"/> with <see cref="CreateDate"/> (UTC).
+    /// Extends <see cref="C_Entity{TId}"/> and implements <see cref="I_Register{TId}"/>
+    /// (<see cref="I_Auditable"/> + <see cref="I_SoftDeletable"/>). Timestamps use UTC.
     /// </para>
-    /// <para><i>[ES] Base abstracta para entidades de dominio que registran fecha de creación.
-    /// Extiende <see cref="C_Entity{TId}"/> e implementa <see cref="I_Register{TId}"/> con <see cref="CreateDate"/> (UTC).</i></para>
+    /// <para><i>[ES] Base abstracta para entidades de registro: identidad, auditoría y borrado lógico.
+    /// Extiende <see cref="C_Entity{TId}"/> e implementa <see cref="I_Register{TId}"/>
+    /// (<see cref="I_Auditable"/> + <see cref="I_SoftDeletable"/>). Las fechas usan UTC.</i></para>
     /// </summary>
     /// <typeparam name="TId">
     /// The underlying type of the unique identifier.
@@ -31,12 +33,33 @@ namespace _1_LibraryClassesNet10.Classes
         public DateTime CreateDate { get; protected set; }
 
         /// <summary>
+        /// Gets the UTC date and time of the last update, or <see langword="null"/> if never updated.
+        /// <para><i>[ES] Obtiene la fecha y hora UTC de la última actualización, o <see langword="null"/> si nunca se actualizó.</i></para>
+        /// </summary>
+        public DateTime? UpdateDate { get; protected set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the entity has been soft-deleted.
+        /// <para><i>[ES] Obtiene un valor que indica si la entidad ha sido eliminada de forma lógica.</i></para>
+        /// </summary>
+        public bool IsDeleted { get; protected set; }
+
+        /// <summary>
+        /// Gets the UTC date and time when the entity was soft-deleted, or <see langword="null"/> if not deleted.
+        /// <para><i>[ES] Obtiene la fecha y hora UTC del borrado lógico, o <see langword="null"/> si no está eliminada.</i></para>
+        /// </summary>
+        public DateTime? DeleteDate { get; protected set; }
+
+        /// <summary>
         /// Initializes a new instance with an unassigned identifier and <see cref="CreateDate"/> = UTC now.
         /// <para><i>[ES] Inicializa una nueva instancia sin identificador y <see cref="CreateDate"/> = UTC ahora.</i></para>
         /// </summary>
         protected C_Register() : base()
         {
             this.CreateDate = DateTime.UtcNow;
+            this.UpdateDate = null;
+            this.IsDeleted = false;
+            this.DeleteDate = null;
         }
 
         /// <summary>
@@ -46,6 +69,9 @@ namespace _1_LibraryClassesNet10.Classes
         protected C_Register(TId? id) : base(id)
         {
             this.CreateDate = DateTime.UtcNow;
+            this.UpdateDate = null;
+            this.IsDeleted = false;
+            this.DeleteDate = null;
         }
 
         /// <summary>
@@ -55,6 +81,85 @@ namespace _1_LibraryClassesNet10.Classes
         protected C_Register(I_Identifiable<TId>? source) : base(source)
         {
             this.CreateDate = DateTime.UtcNow;
+            this.UpdateDate = null;
+            this.IsDeleted = false;
+            this.DeleteDate = null;
+        }
+
+        /// <summary>
+        /// Rehydration constructor for loading from persistence (does not overwrite timestamps with "now").
+        /// <para>
+        /// <see cref="IsDeleted"/> is derived from <paramref name="deleteDate"/>.
+        /// </para>
+        /// <para><i>[ES] Constructor de rehidratación para cargar desde persistencia (no pisa las fechas con "ahora").
+        /// <see cref="IsDeleted"/> se deriva de <paramref name="deleteDate"/>.</i></para>
+        /// </summary>
+        /// <param name="id">The identifier value.</param>
+        /// <param name="createDate">UTC creation timestamp from storage.</param>
+        /// <param name="updateDate">UTC last-update timestamp, or <see langword="null"/>.</param>
+        /// <param name="deleteDate">UTC soft-delete timestamp, or <see langword="null"/> if not deleted.</param>
+        protected C_Register(
+            TId? id,
+            DateTime createDate,
+            DateTime? updateDate = null,
+            DateTime? deleteDate = null)
+            : base(id)
+        {
+            this.CreateDate = createDate;
+            this.UpdateDate = updateDate;
+            this.DeleteDate = deleteDate;
+            this.IsDeleted = deleteDate is not null;
+        }
+
+        /// <summary>
+        /// Copy constructor from another register (identity + audit + soft-delete state).
+        /// <para><i>[ES] Constructor de copia desde otro registro (identidad + auditoría + borrado lógico).</i></para>
+        /// </summary>
+        protected C_Register(I_Register<TId>? source) : base(source)
+        {
+            if (source is null)
+            {
+                this.CreateDate = DateTime.UtcNow;
+                this.UpdateDate = null;
+                this.IsDeleted = false;
+                this.DeleteDate = null;
+            }
+            else
+            {
+                this.CreateDate = source.CreateDate;
+                this.UpdateDate = source.UpdateDate;
+                this.DeleteDate = source.DeleteDate;
+                this.IsDeleted = source.IsDeleted;
+            }
+        }
+
+        /// <summary>
+        /// Marks the entity as updated (<see cref="UpdateDate"/> = UTC now).
+        /// <para><i>[ES] Marca la entidad como actualizada (<see cref="UpdateDate"/> = UTC ahora).</i></para>
+        /// </summary>
+        public virtual void MarkUpdated()
+        {
+            this.UpdateDate = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Soft-deletes the entity. Sets <see cref="IsDeleted"/> and <see cref="DeleteDate"/>.
+        /// <para><i>[ES] Elimina lógicamente la entidad. Asigna <see cref="IsDeleted"/> y <see cref="DeleteDate"/>.</i></para>
+        /// </summary>
+        public virtual void SoftDelete()
+        {
+            this.IsDeleted = true;
+            this.DeleteDate = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Clears the soft-delete mark.
+        /// <para><i>[ES] Quita la marca de borrado lógico.</i></para>
+        /// </summary>
+        public virtual void Restore()
+        {
+            this.IsDeleted = false;
+            this.DeleteDate = null;
         }
     }
 
@@ -105,6 +210,23 @@ namespace _1_LibraryClassesNet10.Classes
         /// <para><i>[ES] Inicializa con un <see cref="Guid"/> concreto. <see cref="Guid.Empty"/> = no inicializado.</i></para>
         /// </summary>
         protected C_RegisterGuid(Guid id) : base(id) { }
+
+        /// <summary>
+        /// Rehydration constructor for loading from persistence.
+        /// <para><i>[ES] Constructor de rehidratación para cargar desde persistencia.</i></para>
+        /// </summary>
+        protected C_RegisterGuid(
+            Guid id,
+            DateTime createDate,
+            DateTime? updateDate = null,
+            DateTime? deleteDate = null)
+            : base(id, createDate, updateDate, deleteDate) { }
+
+        /// <summary>
+        /// Copy constructor from another <see cref="I_Register{TId}"/> of <see cref="Guid"/>.
+        /// <para><i>[ES] Constructor de copia desde otro <see cref="I_Register{TId}"/> de <see cref="Guid"/>.</i></para>
+        /// </summary>
+        protected C_RegisterGuid(I_Register<Guid>? source) : base(source) { }
 
         /// <summary>
         /// Constructor from an <see cref="I_Identifiable{Guid}"/> source.
@@ -180,6 +302,23 @@ namespace _1_LibraryClassesNet10.Classes
         protected C_RegisterInt(int id) : base(id) { }
 
         /// <summary>
+        /// Rehydration constructor for loading from persistence.
+        /// <para><i>[ES] Constructor de rehidratación para cargar desde persistencia.</i></para>
+        /// </summary>
+        protected C_RegisterInt(
+            int id,
+            DateTime createDate,
+            DateTime? updateDate = null,
+            DateTime? deleteDate = null)
+            : base(id, createDate, updateDate, deleteDate) { }
+
+        /// <summary>
+        /// Copy constructor from another <see cref="I_Register{TId}"/> of <see cref="int"/>.
+        /// <para><i>[ES] Constructor de copia desde otro <see cref="I_Register{TId}"/> de <see cref="int"/>.</i></para>
+        /// </summary>
+        protected C_RegisterInt(I_Register<int>? source) : base(source) { }
+
+        /// <summary>
         /// Constructor from an <see cref="I_Identifiable{TId}"/> of <see cref="int"/>.
         /// <para><i>[ES] Constructor a partir de <see cref="I_Identifiable{TId}"/> de <see cref="int"/>.</i></para>
         /// </summary>
@@ -240,6 +379,23 @@ namespace _1_LibraryClassesNet10.Classes
         protected C_RegisterLong(long id) : base(id) { }
 
         /// <summary>
+        /// Rehydration constructor for loading from persistence.
+        /// <para><i>[ES] Constructor de rehidratación para cargar desde persistencia.</i></para>
+        /// </summary>
+        protected C_RegisterLong(
+            long id,
+            DateTime createDate,
+            DateTime? updateDate = null,
+            DateTime? deleteDate = null)
+            : base(id, createDate, updateDate, deleteDate) { }
+
+        /// <summary>
+        /// Copy constructor from another <see cref="I_Register{TId}"/> of <see cref="long"/>.
+        /// <para><i>[ES] Constructor de copia desde otro <see cref="I_Register{TId}"/> de <see cref="long"/>.</i></para>
+        /// </summary>
+        protected C_RegisterLong(I_Register<long>? source) : base(source) { }
+
+        /// <summary>
         /// Constructor from an <see cref="I_Identifiable{TId}"/> of <see cref="long"/>.
         /// <para><i>[ES] Constructor a partir de <see cref="I_Identifiable{TId}"/> de <see cref="long"/>.</i></para>
         /// </summary>
@@ -294,6 +450,23 @@ namespace _1_LibraryClassesNet10.Classes
         /// <para><i>[ES] Inicializa con un identificador concreto. Null se almacena como <see cref="string.Empty"/>.</i></para>
         /// </summary>
         protected C_RegisterString(string? id) : base(id ?? string.Empty) { }
+
+        /// <summary>
+        /// Rehydration constructor for loading from persistence.
+        /// <para><i>[ES] Constructor de rehidratación para cargar desde persistencia.</i></para>
+        /// </summary>
+        protected C_RegisterString(
+            string? id,
+            DateTime createDate,
+            DateTime? updateDate = null,
+            DateTime? deleteDate = null)
+            : base(id ?? string.Empty, createDate, updateDate, deleteDate) { }
+
+        /// <summary>
+        /// Copy constructor from another <see cref="I_Register{TId}"/> of <see cref="string"/>.
+        /// <para><i>[ES] Constructor de copia desde otro <see cref="I_Register{TId}"/> de <see cref="string"/>.</i></para>
+        /// </summary>
+        protected C_RegisterString(I_Register<string>? source) : base(source) { }
 
         /// <summary>
         /// Constructor from an <see cref="I_Identifiable{TId}"/> of <see cref="string"/>.
