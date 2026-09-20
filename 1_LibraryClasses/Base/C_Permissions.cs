@@ -1,7 +1,7 @@
 ﻿using _1_LibraryClassesNet10.Enums;
 using _1_LibraryClassesNet10.Interfaces;
 
-namespace _1_LibraryClassesNet10.Classes
+namespace _1_LibraryClassesNet10.Base
 {
     /// <summary>
     /// Encapsulates and manages flag-based permission state for <see cref="E_Permissions"/>.

@@ -1,7 +1,7 @@
 ﻿using _1_LibraryClassesNet10.Enums;
 using _1_LibraryClassesNet10.Interfaces;
 
-namespace _1_LibraryClassesNet10.Classes
+namespace _1_LibraryClassesNet10.Base
 {
     /// <summary>
     /// Domain entity that records an action type at a point in time, with optional name and description.

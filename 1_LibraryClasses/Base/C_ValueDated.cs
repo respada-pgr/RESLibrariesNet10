@@ -1,4 +1,4 @@
-﻿namespace _1_LibraryClassesNet10.Classes
+﻿namespace _1_LibraryClassesNet10.Base
 {
     /// <summary>
     /// Represents a typed value captured or recorded at a specific point in time.

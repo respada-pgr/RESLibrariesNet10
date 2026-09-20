@@ -1,6 +1,6 @@
 ﻿using _1_LibraryClassesNet10.Interfaces;
 
-namespace _1_LibraryClassesNet10.Classes
+namespace _1_LibraryClassesNet10.Base
 {
     /// <summary>
     /// Represents a generic Value Object container for unique identification that implements <see cref="I_Id{TId}"/>.

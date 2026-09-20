@@ -1,6 +1,6 @@
 ﻿using _1_LibraryClassesNet10.Interfaces;
 
-namespace _1_LibraryClassesNet10.Classes
+namespace _1_LibraryClassesNet10.Base
 {
     /// <summary>
     /// Represents the abstract base class for domain entities with a generic identifier, implementing <see cref="I_Entity{TId}"/>.

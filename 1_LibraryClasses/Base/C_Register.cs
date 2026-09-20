@@ -1,6 +1,6 @@
 ﻿using _1_LibraryClassesNet10.Interfaces;
 
-namespace _1_LibraryClassesNet10.Classes
+namespace _1_LibraryClassesNet10.Base
 {
     /// <summary>
     /// Abstract base for domain register entities: identity, audit timestamps, and soft delete.
