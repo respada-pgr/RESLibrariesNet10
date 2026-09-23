@@ -1,31 +1,47 @@
-# Arquitectura del Proyecto GDC
+# Arquitectura — RESLibrariesNet10
 
-Decisiones de diseño, estructura y contratos específicos de este proyecto.
+Visión de diseño de la **solución completa**. Cada librería tiene su capítulo.
 
----
+| Proyecto | Responsabilidad |
+|----------|-----------------|
+| **1_LibraryClasses** | Núcleo de dominio: identidad, entidad, registro, permisos, acciones… |
+| **2_LibraryUtils** | Utilidades técnicas (ficheros, texto, logger, JSON, timer) |
+| **3_LibraryServices** | Servicios de aplicación (ficheros, criptografía, …) |
+| **RESLibrariesNet10** | Host WinForms de prueba + documentación de solución |
 
-## 1. Estructura del Proyecto
-
-```
-_1_LibraryClassesNet10
-├── Interfaces/
-│   ├── I_Identifiable.cs      // I_Identifiable<TId> : I_Initialized
-│   ├── I_Id.cs                // I_Id<TId> : I_Identifiable<TId>, IEquatable<>
-│   ├── I_Entity.cs            // I_Entity<TId> : I_Identifiable<TId>
-│   │                          // I_Entity : I_Entity<Guid>, I_Initializable<Guid>
-│   ├── I_Named.cs             // I_Named
-│   ├── I_Initialized.cs       // I_Initialized
-│   └── I_Initializable.cs     // I_Initializable<TResult> : I_Initialized
-└── Classes/
-    ├── C_Id.cs                // C_Id<TId>, C_IdGuid, C_IdInt, C_IdLong, C_IdString
-    ├── C_Entity.cs            // C_Entity<TId>, C_EntityGuid, C_EntityInt, C_EntityLong, C_EntityString
-    └── C_Register.cs          // C_Register<TId>, C_RegisterGuid, Int, Long, String
-
-```
+**Backlog:** [PENDING.md](PENDING.md) · **Mapa:** [FOLDER_MAP.md](FOLDER_MAP.md) · **Estilo:** [CONVENTIONS.md](CONVENTIONS.md)
 
 ---
 
-## 2. Contratos de Identidad
+## Capítulo: 1_LibraryClasses
+
+Decisiones de diseño, estructura y contratos de la librería **1_LibraryClasses**.
+
+---
+
+### Estructura de carpetas (lib)
+
+```
+1_LibraryClasses/
+├── Interfaces/          # contratos I_*
+├── Enums/               # E_*
+├── Base/                # C_Id, C_Entity, C_Register, C_Pagination, …
+├── Event/ Result/ List/ Time/ Url/ Files/   # soporte / helpers (pendiente valorar vs Utils)
+└── Docs/
+    ├── ARCHITECTURE.md
+    ├── CONVENTIONS.md
+    ├── CHANGELOG.md
+    ├── FOLDER_MAP.md
+    └── DEV_PROMPT.md
+
+# Backlog de toda la solución:
+#   RESLibrariesNet10/Docs/PENDING.md
+```
+
+
+---
+
+### Contratos de Identidad
 
 ### 2.1 `I_Identifiable<TId>`
 
@@ -63,11 +79,11 @@ _1_LibraryClassesNet10
   - Constructor por defecto → **genera un nuevo Guid** (inicializado).
   - `Init()` / `Init(Guid)` → solo si aún no está inicializado; si ya lo está, excepción.
   - `Id` expuesto como `Guid` en la especialización.
-- Las clases concretas heredan de ella (`C_User`, `C_Order`, etc.).
+- Las clases concretas heredan de ella (`C_Customer`, `C_Product`, etc. en el proyecto consumidor).
 
 ---
 
-## 3. Contratos de Inicialización
+### Contratos de Inicialización
 
 | Interfaz | Propósito | Miembros |
 |----------|-----------|----------|
@@ -107,7 +123,7 @@ public class C_Configuration : I_Initializable<Guid>
 
 ---
 
-## 4. Otros Contratos
+### Otros Contratos
 
 ### `I_Named`
 
@@ -116,7 +132,7 @@ public class C_Configuration : I_Initializable<Guid>
 
 ---
 
-## 5. Decisiones de Diseño Relevantes
+### Decisiones de Diseño Relevantes
 
 | Decisión | Elección | Motivo |
 |----------|----------|--------|
@@ -125,3 +141,30 @@ public class C_Configuration : I_Initializable<Guid>
 | `C_Id` por defecto | No inicializado | Value Object de identidad; se asigna explícitamente |
 | `I_Initializable` genérico | `TResult Init()` | Flexibilidad en el valor de retorno |
 | Clases base de entidad | `abstract` | Evitar instancias directas sin significado de dominio |
+
+
+---
+
+## Capítulo: 2_LibraryUtils
+
+Utilidades reutilizables. Sin modelo de dominio propio.
+
+Carpetas actuales: `Converters/`, `FileManager/`, `Logger/`, `TextManager/`, `Timer/`.
+
+_(Ampliar cuando se documente el diseño de Utils.)_
+
+---
+
+## Capítulo: 3_LibraryServices
+
+Servicios de infraestructura de aplicación.
+
+Carpetas actuales: `Services/Crypto/`, `Services/Files/`, `Files/`.
+
+_(Ampliar cuando se documente el diseño de Services.)_
+
+---
+
+## Capítulo: RESLibrariesNet10 (host)
+
+App de prueba WinForms. Aloja `Docs/` de la solución (PENDING, ARCHITECTURE, etc.).

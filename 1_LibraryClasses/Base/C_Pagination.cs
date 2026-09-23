@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace _1_LibraryClassesNet10.Database
+namespace _1_LibraryClassesNet10.Base
 {
     public class C_Pagination
     {

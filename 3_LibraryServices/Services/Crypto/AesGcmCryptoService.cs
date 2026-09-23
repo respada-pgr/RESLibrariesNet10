@@ -15,7 +15,7 @@ public class AesGcmCryptoService : ICryptoService
     };
 
     /// <summary>
-    /// Descifra el contenido de un archivo .gdc (soporta formato PBKDF2 actual y legado AES-GCM)
+    /// Descifra el contenido de un archivo (soporta formato PBKDF2 actual y legado AES-GCM)
     /// </summary>
     public string DecryptFileContent(string encryptedBase64Content, string password)
     {

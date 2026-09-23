@@ -15,7 +15,7 @@ public class Pbkdf2CryptoService : ICryptoService
     };
 
     /// <summary>
-    /// Descifra el contenido de un archivo .gdc (soporta formato PBKDF2 actual y legado AES-GCM)
+    /// Descifra el contenido de un archivo (soporta formato PBKDF2 actual y legado AES-GCM)
     /// </summary>
     public string DecryptFileContent(string encryptedBase64Content, string password, Pbkdf2CryptoConfig config = new())
     {
@@ -39,7 +39,7 @@ public class Pbkdf2CryptoService : ICryptoService
                     config.KeySizeBytes
                 );
 
-                return DecryptAesGcm(pbkdf2Dto.Data, key, pbkdf2Dto.Iv);
+                return DecryptAes(pbkdf2Dto.Data, key, pbkdf2Dto.Iv);
             }            
         }
         catch (Exception ex) 
@@ -104,14 +104,13 @@ public class Pbkdf2CryptoService : ICryptoService
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         byte[] key = SHA256.HashData(passwordBytes);
 
-        return DecryptAesGcm(cipherTextWithTag, key, iv);
+        return DecryptAes(cipherTextWithTag, key, iv);
     }
 
 
 
-    private string DecryptAesGcm(byte[] cipherTextWithTag, byte[] key, byte[] iv)
+    private string DecryptAes(byte[] cipherTextWithTag, byte[] key, byte[] iv, int tagSize = 16)
     {
-        int tagSize = AppConstants.Crypto.TagSizeBytes; // 16 bytes
         int cipherTextSize = cipherTextWithTag.Length - tagSize;
 
         if (cipherTextSize < 0)

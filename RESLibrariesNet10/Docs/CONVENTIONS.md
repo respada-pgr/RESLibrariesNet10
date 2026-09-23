@@ -1,6 +1,9 @@
-# Convenciones de Código — Proyecto GDC
+# Convenciones de Código — RESLibrariesNet10
 
-Reglas generales de estilo, nomenclatura y documentación aplicables al desarrollo en C#.
+Reglas de estilo, nomenclatura y documentación XML para **toda la solución**  
+(`1_LibraryClasses`, `2_LibraryUtils`, `3_LibraryServices`, host).
+
+> Si un proyecto necesita una excepción, documentarla en un apartado al final con el nombre del proyecto.
 
 ---
 

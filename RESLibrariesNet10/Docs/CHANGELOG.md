@@ -1,3 +1,130 @@
+# Changelog — RESLibrariesNet10
+
+Historial de cambios de la solución. Organizado por proyecto.
+
+---
+
+## 1_LibraryClasses
+
+## 2026-09-22
+
+### Database eliminada
+- Eliminadas `C_RegBBDD_*` (sin usos en el repo)
+- `C_Pagination` movida a `Base/` (namespace `Classes`)
+- Carpeta `Database/` eliminada
+
+---
+
+## 2026-09-20
+
+### Carpetas
+- `Classes/` renombrada a **`Base/`**
+- Nueva carpeta **`Domain/`** (valorada; no usada en el diseño actual)
+
+---
+
+## 2026-09-18
+
+### Enums en MAYÚSCULAS
+- `E_Action`: UNDEFINED, CREATE, UPDATE, ...
+- `E_Permissions`: NONE, READ, WRITE, EXECUTE, DELETE, ALL
+
+---
+
+## 2026-09-18
+
+### C_Action
+- `E_Action` (Undefined, Create, Read, Update, Delete, Execute)
+- `C_Action<TId> : C_EntityNamed<TId>, I_Descriptible`
+- `C_ActionGuid` (sustituye el antiguo `C_Action` no genérico)
+
+---
+
+## 2026-09-18
+
+### C_ValueDated
+- Renombrado: énfasis en valor capturado en una fecha
+- `C_ValueDated<TValue>` + `C_ValueDatedInt`, `C_ValueDatedFloat`, `C_ValueDatedString`
+- Sustituye `C_IntValue_Date` / `C_FloatValue_Date` / `C_StringValue_Date` (sin guion bajo)
+
+---
+
+## 2026-09-18
+
+### Permissions
+- `Enums/E_Permissions.cs` (Flags)
+- `Interfaces/I_Permissions.cs`
+- `Base/C_Permissions.cs` (operadores +, -, |, &; igualdad; conversiones implícitas)
+- Docs estilo [ES]; ejemplos solo en inglés; fix |/& y null en +/-
+
+---
+
+## 2026-09-18
+
+### C_Item
+- `C_Item<TId, TValue> : C_Entity<TId>` con propiedad `Value`
+- Especializaciones: `C_ItemGuid<TValue>`, `C_ItemInt<TValue>`, `C_ItemLong<TValue>`, `C_ItemString<TValue>`
+
+---
+
+## 2026-09-18
+
+### Named sin interfaces compuestas
+- Eliminadas `I_EntityNamed` e `I_RegisterNamed`
+- `C_EntityNamed` → `I_Entity<TId>`, `I_Named`
+- `C_RegisterNamed` → `I_Register<TId>`, `I_Named`
+
+---
+
+## 2026-09-16
+
+### Organización en carpetas
+- `Interfaces/` — contratos `I_*`
+- `Base/` — implementaciones `C_*`
+- `Docs/` — PROJECT, CONVENTIONS, ARCHITECTURE, CHANGELOG, PENDING, DEV_PROMPT
+
+---
+
+## 2026-09-16
+
+### Named + pendientes
+- `I_Entity<TId> + I_Named`, `I_Register<TId> + I_Named`
+- `C_EntityNamed` / `C_RegisterNamed` + especializaciones Guid/Int/Long/String
+- `PENDING.md` (backlog; CQRS con ejemplos)
+
+---
+
+## 2026-09-16
+
+### Especializaciones sin guion bajo
+- `C_IdGuid`, `C_EntityGuid`, `C_RegisterGuid`, etc. (no `C_Id_Guid`)
+
+---
+
+## 2026-09-16
+
+### I_Sortable
+- Renombrado desde `I_Orderable`
+- Interfaz con `SortOrder { get; set; }`
+
+---
+
+## 2026-09-15 (noche)
+
+### Rehidratación C_Register
+- Ctor `(id, createDate, updateDate?, deleteDate?)` en genérico y especializaciones
+- Ctor desde `I_Register<TId>` (copia auditoría + soft-delete)
+- `IsDeleted` se deriva de `deleteDate is not null`
+
+
+### I_Register = Entity + Auditable + SoftDeletable
+- Nuevos: `I_Auditable`, `I_SoftDeletable`
+- `I_Register<TId> : I_Entity<TId>, I_Auditable, I_SoftDeletable`
+- `C_Register`: `CreateDate`, `UpdateDate`, `IsDeleted`, `DeleteDate`; helpers `MarkUpdated`, `SoftDelete`, `Restore`
+- Renombrado `CreateDate` → `CreateDate`
+
+---
+
 ## 2026-09-15
 
 ### I_Register
@@ -54,7 +181,7 @@
 
 ---
 
-# Changelog — Biblioteca GDC (`_1_LibraryClassesNet10`)
+# Changelog — 1_LibraryClasses (`_1_LibraryClassesNet10`) — historial previo
 
 Registro de cambios de diseño, contratos y documentación del proyecto.
 
@@ -169,3 +296,22 @@ Registro de cambios de diseño, contratos y documentación del proyecto.
 ### Área
 - Cambio concreto
 ```
+
+
+---
+
+## 2_LibraryUtils
+
+_(sin entradas aún)_
+
+---
+
+## 3_LibraryServices
+
+_(sin entradas aún)_
+
+---
+
+## RESLibrariesNet10 (host)
+
+- 2026-09-23: Documentación de solución centralizada en `RESLibrariesNet10/Docs/`.
