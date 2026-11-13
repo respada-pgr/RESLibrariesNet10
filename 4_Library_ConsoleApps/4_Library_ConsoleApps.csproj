@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>_4_Library_ConsoleApps</RootNamespace>
+    <AssemblyName>4_Library_ConsoleApps</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\1_LibraryClasses\1_LibraryClasses.csproj" />
+    <ProjectReference Include="..\2_LibraryUtils\2_LibraryUtils.csproj" />
+    <ProjectReference Include="..\3_LibraryServices\3_LibraryServices.csproj" />
+  </ItemGroup>
+
+</Project>

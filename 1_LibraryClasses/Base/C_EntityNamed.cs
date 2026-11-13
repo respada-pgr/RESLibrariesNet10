@@ -1,14 +1,13 @@
-﻿using _1_LibraryClassesNet10.Interfaces;
 
-namespace _1_LibraryClassesNet10.Base
+namespace _1_LibraryClasses
 {
     /// <summary>
     /// Abstract base for domain entities that expose a display or logical name.
     /// <para>
-    /// Extends <see cref="C_Entity{TId}"/> and implements <see cref="I_Named"/>.
+    /// Extends <see cref="C_Entity{TId}"/> and implements <see cref="Name"/>.
     /// </para>
     /// <para><i>[ES] Base abstracta para entidades de dominio que exponen un nombre lógico o de visualización.
-    /// Extiende <see cref="C_Entity{TId}"/> e implementa <see cref="I_Named"/>.</i></para>
+    /// Extiende <see cref="C_Entity{TId}"/> e implementa <see cref="Name"/>.</i></para>
     /// </summary>
     /// <typeparam name="TId">
     /// The underlying type of the unique identifier.
@@ -22,18 +21,23 @@ namespace _1_LibraryClassesNet10.Base
     /// }
     /// </code>
     /// </example>
-    public abstract class C_EntityNamed<TId> : C_Entity<TId>, I_Entity<TId>, I_Named
+    public abstract class C_EntityNamed<TId> : C_Entity<TId>, I_Entity<TId> 
     {
         /// <summary>
         /// Gets or sets the name of the entity.
         /// <para><i>[ES] Obtiene o establece el nombre de la entidad.</i></para>
         /// </summary>
+#region PUBLIC PROPERTIES
+
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Initializes a new instance with an unassigned identifier and empty name.
         /// <para><i>[ES] Inicializa una nueva instancia sin identificador y nombre vacío.</i></para>
         /// </summary>
+#endregion
+#region CONSTRUCTORS
+
         protected C_EntityNamed() : base()
         {
             this.Name = string.Empty;
@@ -54,9 +58,16 @@ namespace _1_LibraryClassesNet10.Base
         /// </summary>
         protected C_EntityNamed(I_Identifiable<TId>? source) : base(source)
         {
-            this.Name = source is I_Named named ? named.Name : string.Empty;
+            this.Name = source is C_EntityNamed<TId> named && !string.IsNullOrWhiteSpace(named.Name) ? named.Name : string.Empty;
         }
-    }
+
+        protected C_EntityNamed(C_EntityNamed<TId>? source) : base(source)
+        {
+            this.Name = source?.Name ?? string.Empty;
+        }
+
+#endregion
+}
 
     /// <summary>
     /// Named entity specialized for <see cref="Guid"/> identity.
@@ -65,6 +76,8 @@ namespace _1_LibraryClassesNet10.Base
     public abstract class C_EntityNamedGuid : C_EntityNamed<Guid>
     {
         /// <inheritdoc cref="C_EntityGuid.Id"/>
+#region PUBLIC PROPERTIES
+
         public new Guid Id
         {
             get
@@ -82,6 +95,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes with a newly generated <see cref="Guid"/> and optional name.
         /// <para><i>[ES] Inicializa con un <see cref="Guid"/> nuevo y nombre opcional.</i></para>
         /// </summary>
+#endregion
+#region CONSTRUCTORS
+
         protected C_EntityNamedGuid(string? name = null) : base(Guid.NewGuid(), name) { }
 
         /// <summary>
@@ -97,10 +113,13 @@ namespace _1_LibraryClassesNet10.Base
         protected C_EntityNamedGuid(I_Identifiable<Guid>? source)
             : base(source?.Id is Guid id && id != Guid.Empty ? id : Guid.Empty)
         {
-            if (source is I_Named named)
+            if (source is C_EntityNamed<Guid> named && !string.IsNullOrWhiteSpace(named.Name))
                 this.Name = named.Name;
         }
-    }
+
+        protected C_EntityNamedGuid(C_EntityNamedGuid? source) : base(source) { }
+#endregion
+}
 
     /// <summary>
     /// Named entity specialized for <see cref="int"/> identity. <c>0</c> means not initialized.
@@ -108,6 +127,8 @@ namespace _1_LibraryClassesNet10.Base
     /// </summary>
     public abstract class C_EntityNamedInt : C_EntityNamed<int>
     {
+#region PUBLIC PROPERTIES
+
         public new int Id
         {
             get
@@ -119,6 +140,8 @@ namespace _1_LibraryClassesNet10.Base
         }
 
         public new bool IsInitialized => this.Id != 0;
+#endregion
+#region CONSTRUCTORS
 
         protected C_EntityNamedInt(string? name = null) : base(0, name) { }
 
@@ -127,10 +150,13 @@ namespace _1_LibraryClassesNet10.Base
         protected C_EntityNamedInt(I_Identifiable<int>? source)
             : base(source?.Id is int id && id != 0 ? id : 0)
         {
-            if (source is I_Named named)
+            if (source is C_EntityNamed<int> named && !string.IsNullOrWhiteSpace(named.Name))
                 this.Name = named.Name;
         }
-    }
+
+        protected C_EntityNamedInt(C_EntityNamedInt? source) : base(source) { }
+#endregion
+}
 
     /// <summary>
     /// Named entity specialized for <see cref="long"/> identity. <c>0L</c> means not initialized.
@@ -138,6 +164,8 @@ namespace _1_LibraryClassesNet10.Base
     /// </summary>
     public abstract class C_EntityNamedLong : C_EntityNamed<long>
     {
+#region PUBLIC PROPERTIES
+
         public new long Id
         {
             get
@@ -149,6 +177,8 @@ namespace _1_LibraryClassesNet10.Base
         }
 
         public new bool IsInitialized => this.Id != 0L;
+#endregion
+#region CONSTRUCTORS
 
         protected C_EntityNamedLong(string? name = null) : base(0L, name) { }
 
@@ -157,10 +187,13 @@ namespace _1_LibraryClassesNet10.Base
         protected C_EntityNamedLong(I_Identifiable<long>? source)
             : base(source?.Id is long id && id != 0L ? id : 0L)
         {
-            if (source is I_Named named)
+            if (source is C_EntityNamed<long> named && !string.IsNullOrWhiteSpace(named.Name))
                 this.Name = named.Name;
         }
-    }
+
+        protected C_EntityNamedLong(C_EntityNamedLong? source) : base(source) { }
+#endregion
+}
 
     /// <summary>
     /// Named entity specialized for <see cref="string"/> identity. <see cref="string.Empty"/> means not initialized.
@@ -168,6 +201,8 @@ namespace _1_LibraryClassesNet10.Base
     /// </summary>
     public abstract class C_EntityNamedString : C_EntityNamed<string>
     {
+#region PUBLIC PROPERTIES
+
         public new string Id
         {
             get => base.Id ?? string.Empty;
@@ -175,6 +210,8 @@ namespace _1_LibraryClassesNet10.Base
         }
 
         public new bool IsInitialized => !string.IsNullOrEmpty(this.Id);
+#endregion
+#region CONSTRUCTORS
 
         protected C_EntityNamedString() : base(string.Empty, string.Empty) { }
 
@@ -183,8 +220,11 @@ namespace _1_LibraryClassesNet10.Base
         protected C_EntityNamedString(I_Identifiable<string>? source)
             : base(source is null ? string.Empty : (source.Id ?? string.Empty))
         {
-            if (source is I_Named named)
+            if (source is C_EntityNamed<string> named && !string.IsNullOrWhiteSpace(named.Name))
                 this.Name = named.Name;
         }
-    }
+
+        protected C_EntityNamedString(C_EntityNamedString? source) : base(source) { }
+#endregion
+}
 }

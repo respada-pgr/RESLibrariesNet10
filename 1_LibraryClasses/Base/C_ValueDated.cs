@@ -1,4 +1,4 @@
-﻿namespace _1_LibraryClassesNet10.Base
+namespace _1_LibraryClasses
 {
     /// <summary>
     /// Represents a typed value captured or recorded at a specific point in time.
@@ -55,6 +55,27 @@
             this.Value = value;
             this.Date = date ?? DateTime.UtcNow;
         }
+        /// <summary>
+        /// Copy constructor. Preserves <see cref="Value"/> and <see cref="Date"/> from source.
+        /// <para><i>[ES] Constructor de copia. Conserva Value y Date del origen.</i></para>
+        /// </summary>
+        public C_ValueDated(C_ValueDated<TValue>? source)
+        {
+            if (source is null)
+            {
+                this.Value = default!;
+                this.Date = DateTime.UtcNow;
+            }
+            else
+            {
+                this.Value = source.Value;
+                this.Date = source.Date;
+            }
+        }
+
+        public C_ValueDated<TValue> Clone()
+            => new C_ValueDated<TValue>(this);
+
     }
 
     /// <summary>
@@ -74,6 +95,11 @@
         /// <para><i>[ES] Inicializa con el valor indicado y fecha de captura opcional (UTC ahora si se omite).</i></para>
         /// </summary>
         public C_ValueDatedInt(int value, DateTime? date = null) : base(value, date) { }
+
+        public C_ValueDatedInt(C_ValueDatedInt? source) : base(source) { }
+
+        public new C_ValueDatedInt Clone() => new C_ValueDatedInt(this);
+
     }
 
     /// <summary>
@@ -93,6 +119,11 @@
         /// <para><i>[ES] Inicializa con el valor indicado y fecha de captura opcional (UTC ahora si se omite).</i></para>
         /// </summary>
         public C_ValueDatedFloat(float value, DateTime? date = null) : base(value, date) { }
+
+        public C_ValueDatedFloat(C_ValueDatedFloat? source) : base(source) { }
+
+        public new C_ValueDatedFloat Clone() => new C_ValueDatedFloat(this);
+
     }
 
     /// <summary>

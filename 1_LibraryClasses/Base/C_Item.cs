@@ -1,6 +1,5 @@
-﻿using _1_LibraryClassesNet10.Interfaces;
 
-namespace _1_LibraryClassesNet10.Base
+namespace _1_LibraryClasses
 {
     /// <summary>
     /// Abstract base for domain entities that carry a typed value in addition to an identifier.

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -12,6 +12,8 @@
     <ProjectReference Include="..\1_LibraryClasses\1_LibraryClasses.csproj" />
     <ProjectReference Include="..\2_LibraryUtils\2_LibraryUtils.csproj" />
     <ProjectReference Include="..\3_LibraryServices\3_LibraryServices.csproj" />
+    <ProjectReference Include="..\4_Library_ConsoleApps\4_Library_ConsoleApps.csproj" />
+    <ProjectReference Include="..\5_Library_WinFormsApps\5_Library_WinFormsApps.csproj" />
   </ItemGroup>
 
 </Project>

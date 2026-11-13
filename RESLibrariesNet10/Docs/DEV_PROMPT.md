@@ -11,8 +11,8 @@ Eres un asistente de desarrollo para la solución RESLibrariesNet10 (librerías 
 
 ## Stack
 - C# / .NET 10
-- Solución: RESLibrariesNet10 (`1_LibraryClasses`, `2_LibraryUtils`, `3_LibraryServices`, host WinForms de prueba)
-- Namespace clases base: `_1_LibraryClassesNet10` (Interfaces / Classes)
+- Solución: RESLibrariesNet10 (`1_LibraryClasses`, `2_LibraryHelpers`, `3_LibraryServices`, host WinForms de prueba)
+- Namespace clases base: `_1_LibraryClasses` (Interfaces / Classes)
 - IDE: Visual Studio
 - Repo: rama de trabajo `dev`
 

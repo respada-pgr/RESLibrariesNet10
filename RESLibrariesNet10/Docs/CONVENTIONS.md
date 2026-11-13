@@ -1,7 +1,7 @@
 # Convenciones de Código — RESLibrariesNet10
 
 Reglas de estilo, nomenclatura y documentación XML para **toda la solución**  
-(`1_LibraryClasses`, `2_LibraryUtils`, `3_LibraryServices`, host).
+(`1_LibraryClasses`, `2_LibraryHelpers`, `3_LibraryServices`, host).
 
 > Si un proyecto necesita una excepción, documentarla en un apartado al final con el nombre del proyecto.
 
@@ -13,9 +13,17 @@ Reglas de estilo, nomenclatura y documentación XML para **toda la solución**
 
 | Tipo              | Prefijo | Ejemplo                                              | Notas |
 |-------------------|---------|------------------------------------------------------|-------|
-| Interfaces        | `I_`    | `I_Identifiable<TId>`, `I_Named`, `I_Initialized`   | PascalCase después del prefijo |
-| Clases            | `C_`    | `C_Entity<TId>`, `C_Id<TId>`, `C_User`               | Concretas y abstractas |
-| Enumeraciones     | `E_`    | `E_Status`, `E_UserRole`                             | Reservado para uso futuro |
+| Interfaces        | `I_`    | `I_Identifiable<TId>`, `I_Identifiable`, `I_Initialized`   | PascalCase después del prefijo |
+| Clases (dominio)  | `C_`     | `C_Entity<TId>`, `C_Id<TId>`, `C_Register`            | Núcleo en `1_LibraryClasses` |
+| Helpers           | `C_Hlp_` | `C_Hlp_File`, `C_Hlp_String`, `C_Hlp_StackTrace`   | Utilidades en `2_LibraryHelpers` |
+| Services          | `C_Srv_` | `C_Srv_Files`, …                                      | Servicios en `3_LibraryServices` (cuando se renombren) |
+| Enumeraciones     | `E_`     | `E_Status`, `E_Permissions`                           | Miembros en MAYÚSCULAS (objetivo) |
+
+### 1.1.1 Excepciones al prefijo `C_`
+
+| Tipo | Nombre | Motivo |
+|------|--------|--------|
+| Logger global (Utils) | `GLogger`, `C_Hlp_DebugLog` | Infraestructura estática global; carpeta/namespace `GlobalLogger` |
 
 ### 1.2 Parámetros Genéricos
 
@@ -35,14 +43,14 @@ Reglas de estilo, nomenclatura y documentación XML para **toda la solución**
 - Estilo **con llaves** (no file-scoped).
 
 ```csharp
-namespace _1_LibraryClassesNet10.Interfaces
+namespace _1_LibraryClasses.Interfaces
 {
     // ...
 }
 ```
 
 ```csharp
-namespace _1_LibraryClassesNet10.Classes
+namespace _1_LibraryClasses.Classes
 {
     // ...
 }
@@ -69,7 +77,7 @@ Se controla en el `.csproj`:
 </PropertyGroup>
 ```
 
-Solo hay que añadir `using` manuales para namespaces propios del proyecto (por ejemplo `_1_LibraryClassesNet10.Interfaces`).
+Solo hay que añadir `using` manuales para namespaces propios del proyecto (por ejemplo `_1_LibraryClasses.Interfaces`).
 
 ---
 
@@ -151,5 +159,97 @@ Solo hay que añadir `using` manuales para namespaces propios del proyecto (por 
 | Propiedades / Métodos | PascalCase (inglés)                             |
 | Documentación         | Inglés principal + `[ES]` en itálica            |
 | Ejemplos de código    | Solo en inglés                                  |
-| Namespaces            | `_1_LibraryClassesNet10.Xxx` **con llaves** `{ }` |
+| Namespaces            | `_1_LibraryClasses.Xxx` **con llaves** `{ }` |
 | Implicit Usings       | Activados (no hace falta `using System;`, etc.)   |
+
+
+---
+
+## 4. Organización interna de clases (`#region`)
+
+Usar regiones **solo en tipos con bastante código** (muchas propiedades, constructores u sobrecargas). Clases pequeñas no las necesitan.
+
+### 4.1 Orden recomendado (de arriba a abajo)
+
+| Orden | Región | Contenido |
+|------:|--------|-----------|
+| 1 | `PRIVATE FIELDS` | Campos privados (`_camelCase`) |
+| 2 | `PUBLIC PROPERTIES` | Propiedades públicas (y `protected` de contrato si aplica) |
+| 3 | `PROTECTED PROPERTIES` | Solo si hay un bloque claro de propiedades protegidas |
+| 4 | `CONSTRUCTORS` | Todos los constructores |
+| 5 | `PUBLIC METHODS` | API pública de instancia |
+| 6 | `PROTECTED METHODS` | Métodos reutilizables por herederos |
+| 7 | `PRIVATE METHODS` | Helpers privados de la clase |
+| 8 | `OPERATORS` / `NESTED TYPES` | Si existen |
+
+Nombres de región en **inglés**, `SCREAMING` o `Title Case` coherente en todo el proyecto. Preferido:
+
+```csharp
+#region PRIVATE FIELDS
+#region PUBLIC PROPERTIES
+#region CONSTRUCTORS
+#region PUBLIC METHODS
+#region PRIVATE METHODS
+```
+
+### 4.2 Reglas
+
+1. **La visibilidad de la región debe coincidir con el contenido**  
+   - `PRIVATE METHODS` → solo `private`  
+   - `PUBLIC METHODS` → `public` (y eventualmente `internal` de API)  
+   - No meter métodos `public` en `INTERNAL` / `PRIVATE`.
+
+2. **No usar** nombres confusos como `INTERNAL METHODS` para código público.
+
+3. **Constantes**  
+   - `private const` / `static readonly` al inicio de `PRIVATE FIELDS`, o región `CONSTANTS` antes de campos si hay muchas.
+
+4. **Miembros `static`**  
+   - Pueden ir en la misma región por visibilidad (`PUBLIC METHODS`) o en `PUBLIC STATIC METHODS` si el bloque es grande.
+
+5. **Especializaciones** (`C_LogLine : C_LogLine<long>`)  
+   - Solo `CONSTRUCTORS` (y overrides si los hay); no repetir campos de la base.
+
+6. **Interfaces**  
+   - Normalmente sin regiones; si el contrato es muy grande, agrupar por responsabilidad (identidad, auditoría, etc.).
+
+
+6. **Alineación**  
+   `#region` / `#endregion` **sin tabulación**: alineados a la columna 0 (izquierda del fichero), no indentados con el cuerpo de la clase.
+
+### 4.3 Ejemplo mínimo
+
+```csharp
+public class C_Example
+{
+#region PRIVATE FIELDS
+    private int _count;
+#endregion
+
+#region PUBLIC PROPERTIES
+    public int Count => _count;
+#endregion
+
+#region CONSTRUCTORS
+    public C_Example() { }
+#endregion
+
+#region PUBLIC METHODS
+    public void Reset() => _count = 0;
+#endregion
+
+#region PRIVATE METHODS
+    private void Touch() { }
+#endregion
+}
+```
+
+
+
+---
+
+## Copy constructor and Clone (pending formalization)
+
+- Prefer a **copy constructor** `Type(Type source)` that copies state.
+- Prefer **`Clone()`** that returns a new instance with a **new `CreateDate`** when the type has one.
+- Exact rules for **when `CreateDate` is set** are **open** — see `PENDING.md` (2026-11-12).

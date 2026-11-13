@@ -1,893 +1,728 @@
-﻿using _1_LibraryClassesNet10.Enums;
-using _1_LibraryClassesNet10.Event;
-using _1_LibraryClassesNet10.Time;
+using _1_LibraryClasses.Event;
 using System;
 using System.Text;
 
-namespace _1_LibraryClassesNet10.Result
+namespace _1_LibraryClasses.Result
 {
-    public class C_Result<T> : C_Result
+    /// <summary>
+    /// Untyped operation result (status derived from type, message/details, optional exception).
+    /// <para><i>[ES] Resultado de operación sin payload (estado derivado del tipo, mensaje/detalles, excepción opcional).</i></para>
+    /// </summary>
+    public class C_Result : I_Infoable, I_Result
     {
-        public new T Value
-        {
-            get => (T)base.Value;
-            set
-            {
-                base.Value = value;
-                base.Type = E_ResultType.OBJECT;
-            }
-        }
+#region PRIVATE FIELDS
 
-        #region CONSTRUCTORS
-        public C_Result() { }
-        public C_Result(E_ResultStatus status) : base(status) { }
-        public C_Result(string title, string message = null, E_ResultStatus status = E_ResultStatus.ND) : base(title, message, status) { }
-        public C_Result(string title, T value, string message = null, E_ResultStatus status = E_ResultStatus.SUCCESS) : base(title, value, message, status) { }
-        public C_Result(string title, E_ResultType type, T value, string message, E_ResultStatus status = E_ResultStatus.SUCCESS) : base(title, type, value, message, status) { }
-        public C_Result(string title, E_ResultType type, T value, string message, string details, E_ResultStatus status = E_ResultStatus.SUCCESS) : base(title, type, value, message, details, status) { }
-        public C_Result(string title, C_Result result, E_ResultStatus status = E_ResultStatus.ND) : base(title, result, status) { }
-        public C_Result(string title, C_Result result, string message, E_ResultStatus status = E_ResultStatus.ND) : base(title, result, message, status) { }
-        public C_Result(string title, C_Result<T> result, E_ResultStatus status = E_ResultStatus.ND) : base(title, result, status)
-        {
-            this.Value = result.Value;
-        }
-        public C_Result(string title, C_Result<T> result, string message, E_ResultStatus status = E_ResultStatus.ND) : base(title, result, message, status)
-        {
-            this.Value = result.Value;
-        }
-        public C_Result(string title, C_Error error) : base(title, error) { }
-        public C_Result(string title, C_Error error, string message) : base(title, error, message) { }
-        public C_Result(string title, C_Exception exception) : base(title, exception) { }
-        public C_Result(string title, C_Exception exception, string message) : base(title, exception, message) { }
-        public C_Result(string title, Exception exception) : base(title, exception) { }
-        public C_Result(string title, Exception exception, string message) : base(title, exception, message) { }
-        public C_Result(T value, E_ResultStatus status = E_ResultStatus.SUCCESS) : base(value, status) { }
-        public C_Result(E_ResultType type, T value, E_ResultStatus status = E_ResultStatus.SUCCESS) : base(type, value, status) { }
-        public C_Result(E_ResultType type, T value, string message, E_ResultStatus status = E_ResultStatus.SUCCESS) : base(type, value, message, status) { }
-        public C_Result(C_Result result, E_ResultStatus status = E_ResultStatus.ND) : base(result, status) { }
-        public C_Result(C_Result result, string message, E_ResultStatus status = E_ResultStatus.ND) : base(result, message, status) { }
-        public C_Result(C_Result<T> result, E_ResultStatus status = E_ResultStatus.ND) : base(result, status)
-        {
-            this.Value = result.Value;
-        }
-        public C_Result(C_Result<T> result, string message, E_ResultStatus status = E_ResultStatus.ND) : base(result, message, status)
-        {
-            this.Value = result.Value;
-        }
-        public C_Result(C_Error error) : base(error) { }
-        public C_Result(C_Error error, string message) : base(error, message) { }
-        public C_Result(C_Exception exception) : base(exception) { }
-        public C_Result(C_Exception exception, string message) : base(exception, message) { }
-        public C_Result(Exception exception) : base(exception) { }
-        public C_Result(Exception exception, string message) : base(exception, message) { }
-        #endregion
-    }
-
-    public class C_Result
-    {
         private E_ResultType _type = E_ResultType.ND;
-        private E_ResultStatus _status = E_ResultStatus.ND;
-        private C_DateTime _dateTime = new C_DateTime(System.DateTime.Now);
-        private string _title = "";
-        private string _message = null;
-        private string _details = null;
-        private Object _value = null;
-        private Object _log_info = null;
-        private C_Exception _exception = null;
+        private DateTime _createDate = DateTime.Now;
+        private string _message = "";
+        private string _details = "";
+        private C_Exception? _exception = null;
 
-        public C_DateTime DateTime { get => _dateTime; }
-        public E_ResultType Type { get => this._type; set => this._type = value; }
-        public E_ResultStatus Status
-        {
-            get => this._status;
-            set
-            {
-                this._status = value;
-                this._dateTime.DateTime = System.DateTime.Now;
+#endregion
 
-                if (this.Status == E_ResultStatus.SUCCESS)
-                {
-                    if (this.Type == E_ResultType.WARNING)
-                        this._message = "Warning! Success";
-                    else
-                    {
-                        this._message = "Success!";
-                    }
-                }
-                else if (this.Status == E_ResultStatus.FAIL)
-                {
-                    if (this.Type == E_ResultType.EXCEPTION)
-                        this._message = "Exception!!";
-                    else if (this.Type == E_ResultType.ERROR)
-                        this._message = "Error!!";
-                    else if (this.Type == E_ResultType.WARNING)
-                        this._message = "Warning! Fail";
-                    else
-                        this._message = "Fail!";
-                }
-                else
-                {
-                    this.Type = E_ResultType.ND;
-                    this._message = "";
-                }
-            }
-        }
-        public string Title { get => this._title; set => this._title = value; }
-        public string Message { get => this._message ?? _status.ToString(); set => this._message = value; }
-        public string Details { get => this._details; set => this._details = value; }
+#region PUBLIC PROPERTIES
 
-        public C_Exception Exception { get => this._exception; }
-        public object Value
+        /// <summary>
+        /// Derived from <see cref="Type"/>: OK/WARNING → OK; FAIL/ERROR/EXCEPTION → FAIL; ND → ND.
+        /// <para><i>[ES] Derivado de <see cref="Type"/>.</i></para>
+        /// </summary>
+        public E_ResultStatus Status => this._type switch
         {
-            get => this._value;
-            set
-            {
-                this._value = value;
-            }
-        }
-        public object LogInfo
+            E_ResultType.OK or E_ResultType.WARNING => E_ResultStatus.OK,
+            E_ResultType.ND => E_ResultStatus.ND,
+            _ => E_ResultStatus.FAIL,
+        };
+
+        public E_ResultType Type
         {
-            get => this._log_info;
-            set
-            {
-                this._log_info = value;
-            }
-        }
-        public bool Logged { get => this._log_info != null; }
-        public bool Success
-        {
-            get => this._status == E_ResultStatus.SUCCESS;
-            set => this.Status = value ? E_ResultStatus.SUCCESS : E_ResultStatus.ND;
-        }
-        public bool Fail
-        {
-            get => this._status == E_ResultStatus.FAIL;
-            set => this.Status = value ? E_ResultStatus.FAIL : E_ResultStatus.ND;
+            get => this._type;
+            protected set => this._type = value;
         }
 
-        #region PUBLIC CONSTRUCTORS
-        public C_Result()
+        /// <summary>
+        /// Numeric severity of <see cref="Type"/> (same as cast to int). Higher = worse.
+        /// <para><i>[ES] Severidad numérica de <see cref="Type"/>. Mayor = peor.</i></para>
+        /// </summary>
+        public int WarningLevel => (int)this._type;
+
+        public DateTime CreateDate => this._createDate;
+
+        public string Message
+        {
+            get => this._message ?? "";
+            protected set => this._message = value ?? "";
+        }
+
+        public string Details
+        {
+            get => this._details ?? "";
+            protected set => this._details = value ?? "";
+        }
+
+        public C_Exception? Exception => this._exception;
+
+        public bool IsOK => this.Status == E_ResultStatus.OK;
+        public bool IsFail => this.Status == E_ResultStatus.FAIL;
+        public bool IsWarning => this._type == E_ResultType.WARNING;
+        public bool IsError => this.WarningLevel >= (int)E_ResultType.ERROR;
+        public bool HasException => this._exception is not null || this._type == E_ResultType.EXCEPTION;
+
+#endregion
+
+#region CONSTRUCTORS
+
+        protected C_Result()
         {
         }
-        public C_Result(E_ResultStatus status)
+
+        protected C_Result(E_ResultType type)
         {
-            this.Status = status;
+            this.Set(type);
         }
-        public C_Result(string title, E_ResultStatus status = E_ResultStatus.ND)
+
+        protected C_Result(E_ResultStatus status)
         {
-            this._title = title ?? "";
-            this.Status = status;
+            this.Set(status);
         }
-        public C_Result(string title, string message, E_ResultStatus status = E_ResultStatus.ND)
+
+        public C_Result(string message, E_ResultType type = E_ResultType.FAIL)
         {
-            this._title = title ?? "";
+            this.Set(message, type);
+        }
+
+        public C_Result(string message, E_ResultStatus status = E_ResultStatus.FAIL)
+        {
             this.Set(message, status);
         }
-        public C_Result(string title, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
+
+        public C_Result(string message, string details, E_ResultType type = E_ResultType.FAIL)
         {
-            this._title = title ?? "";
+            this.Set(message, details, type);
+        }
+
+        public C_Result(string message, string details, E_ResultStatus status = E_ResultStatus.FAIL)
+        {
             this.Set(message, details, status);
         }
-        public C_Result(string title, C_Result result, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? result.Title;
-            this.Set(result, status);
-        }
-        public C_Result(string title, C_Result result, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? result.Title;
-            this.Set(result, message, status);
-        }
-        public C_Result(string title, C_Result result, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? result.Title;
-            this.Set(result, message, details, status);
-        }
-        public C_Result(string title, C_Warning warning, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "Warning!";
-            this.Set(warning);
-        }
-        public C_Result(string title, C_Warning warning, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "Warning!";
-            this.Set(warning, message);
-        }
-        public C_Result(string title, C_Warning warning, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "Warning!";
-            this.Set(warning, message, details);
-        }
-        public C_Result(string title, C_Error error)
-        {
-            this._title = title ?? "Error!";
-            this.Set(error);
-        }
-        public C_Result(string title, C_Error error, string message)
-        {
-            this._title = title ?? "Error!";
-            this.Set(error, message);
-        }
-        public C_Result(string title, C_Error error, string message, string details)
-        {
-            this._title = title ?? "Error!";
-            this.Set(error, message, details);
-        }
-        public C_Result(string title, C_Exception exception)
-        {
-            this._title = title ?? "Exception";
-            this.Set(exception);
-        }
-        public C_Result(string title, C_Exception exception, string message)
-        {
-            this._title = title ?? "Exception";
-            this.Set(exception, message);
-        }
-        public C_Result(string title, C_Exception exception, string message, string details)
-        {
-            this._title = title ?? "Exception";
-            this.Set(exception, message, details);
-        }
-        public C_Result(string title, Exception exception)
-        {
-            this._title = title ?? "Exception";
-            this.Set(exception);
-        }
-        public C_Result(string title, Exception exception, string message)
-        {
-            this._title = title ?? "Exception";
-            this.Set(exception, message);
-        }
-        public C_Result(string title, Exception exception, string message, string details)
-        {
-            this._title = title ?? "Exception";
-            this.Set(exception, message, details);
-        }
 
-        public C_Result(C_Result result, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = result.Title ?? "";
-            this.Set(result, status);
-        }
-        public C_Result(C_Result result, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(result, message, status);
-        }
-        public C_Result(C_Result result, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(result, message, details, status);
-        }
-        public C_Result(C_Warning warning, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "Warning!";
-            this.Set(warning, status);
-        }
-        public C_Result(C_Warning warning, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "Warning!";
-            this.Set(warning, message, status);
-        }
-        public C_Result(C_Warning warning, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "Warning!";
-            this.Set(warning, message, details, status);
-        }
-        public C_Result(C_Error error)
-        {
-            this._title = "Error!";
-            this.Set(error);
-        }
-        public C_Result(C_Error error, string message)
-        {
-            this._title = "Error!";
-            this.Set(error, message);
-        }
-        public C_Result(C_Error error, string message, string details)
-        {
-            this._title = "Error!";
-            this.Set(error, message, details);
-        }
-        public C_Result(C_Exception exception)
-        {
-            this._title = "Exception!";
-            this.Set(exception);
-        }
-        public C_Result(C_Exception exception, string message)
-        {
-            this._title = "Exception!";
-            this.Set(exception, message);
-        }
-        public C_Result(C_Exception exception, string message, string details)
-        {
-            this._title = "Exception!";
-            this.Set(exception, message, details);
-        }
-        public C_Result(Exception exception)
-        {
-            this._title = "Exception!";
-            this.Set(exception);
-        }
-        public C_Result(Exception exception, string message)
-        {
-            this._title = "Exception!";
-            this.Set(exception, message);
-        }
-        public C_Result(Exception exception, string message, string details)
-        {
-            this._title = "Exception!";
-            this.Set(exception, message, details);
-        }
-        #endregion
-
-        #region PUBLIC METHODS
-        public void Set(bool result)
-        {
-            this.Status = result ? E_ResultStatus.SUCCESS : E_ResultStatus.FAIL;
-        }
-        public void Set(bool result, string details)
+        public C_Result(C_Result result)
         {
             this.Set(result);
-            this.AddDetails(details);
         }
-        public void Set(bool result, string details, string message)
+
+        public C_Result(C_Result result, string message)
         {
             this.Set(result, message);
-            this.AddDetails(details);
         }
 
-        public void Set(E_ResultStatus status)
+        /// <summary>
+        /// Clones this result. <see cref="CreateDate"/> is the clone creation time (not copied from source).
+        /// <para><i>[ES] Clona el resultado. <see cref="CreateDate"/> es el del clon, no el del origen.</i></para>
+        /// </summary>
+        public virtual C_Result Clone()
+            => new C_Result(this);
+
+        public C_Result(C_Warning warning)
         {
-            this.Status = status;
+            this.Set(warning);
         }
-        public void Set(string message, E_ResultStatus status = E_ResultStatus.SUCCESS)
+
+        public C_Result(C_Warning warning, string message)
         {
-            this.Status = status;
-            this._message = message;
+            this.Set(warning, message);
         }
-        public void Set(string message, string details, E_ResultStatus status = E_ResultStatus.SUCCESS)
-        {
-            this.Set(message, status);
-            this.AddDetails(details);
-        }
-        public void Set(C_Result result, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._type = result.Type;
-            this.Status = status != E_ResultStatus.ND ? status : result.Status;
-            this._message = result.Message;
-            this.AddDetails(result);
-            this._value = result.Value;
-            this._log_info = result.LogInfo;
-        }
-        public void Set(C_Result result, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this.Set(result, status);
-            this._message = message ?? this._message;
-        }
-        public void Set(C_Result result, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this.Set(result, message, status);
-            this.AddDetails(details);
-        }
-        public void Set(C_Warning warning, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._type = E_ResultType.WARNING;
-            this.Status = status != E_ResultStatus.ND ? status : warning.ErrorType == E_ErrorType.ND ? E_ResultStatus.SUCCESS : E_ResultStatus.FAIL;
-            this._message = warning.Message;
-            this.AddDetails(warning);
-            this.Value = warning;
-        }
-        public void Set(C_Warning warning, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this.Set(warning, status);
-            this._message = message;
-        }
-        public void Set(C_Warning warning, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this.Set(warning, message, status);
-            this.AddDetails(details);
-        }
-        public void Set(C_Error error)
-        {
-            this._type = E_ResultType.ERROR;
-            this.Status = E_ResultStatus.FAIL;
-            this._message = error.Message;
-            this.AddDetails(error);
-            this.Value = error;
-        }
-        public void Set(C_Error error, string message)
+
+        public C_Result(C_Error error)
         {
             this.Set(error);
-            this._message = message;
         }
-        public void Set(C_Error error, string message, string details)
+
+        public C_Result(C_Error error, string message)
         {
             this.Set(error, message);
-            this.AddDetails(details);
         }
-        public void Set(C_Exception exception)
-        {
-            Set(new C_Error(exception));
-            this._exception = exception;
-        }
-        public void Set(C_Exception exception, string message)
+
+        public C_Result(C_Exception exception)
         {
             this.Set(exception);
-            this._message = message;
         }
-        public void Set(C_Exception exception, string message, string details)
+
+        public C_Result(C_Exception exception, string message)
         {
             this.Set(exception, message);
-            this.AddDetails(details);
         }
-        public void Set(Exception exception)
-        {
-            this.Set(new C_Exception(exception));
-        }
-        public void Set(Exception exception, string message)
+
+        public C_Result(Exception exception)
         {
             this.Set(exception);
-            this._message = message;
         }
-        public void Set(Exception exception, string message, string details)
+
+        public C_Result(Exception exception, string message)
         {
             this.Set(exception, message);
-            this.AddDetails(details);
         }
 
-        public void SetSuccess()
-        {
-            this.Set(E_ResultStatus.SUCCESS);
-        }
-        public void SetSuccess(string message)
-        {
-            this.SetSuccess();
-            this._message = message;
-        }
-        public void SetSuccess(string message, string details)
-        {
-            this.SetSuccess();
-            this._message = message;
-            this.AddDetails(details);
-        }
-        public void SetSuccess(Object value)
-        {
-            SetSuccess();
-            this._value = value;
-        }
-        public void SetSuccess(Object value, string message)
-        {
-            this.SetSuccess(value);
-            this._message = message;
-        }
-        public void SetSuccess(Object value, string message, string details)
-        {
-            this.SetSuccess(value);
-            this._message = message;
-            this.AddDetails(details);
-        }
-        public void SetFail()
-        {
-            this.Set(E_ResultStatus.FAIL);
-        }
-        public void SetFail(string message)
-        {
-            this.SetFail();
-            this._message = message ?? this._message;
-        }
-        public void SetFail(string message, string details)
-        {
-            this.SetFail(message);
-            this.AddDetails(details);
-        }
+#endregion
 
-        public void AddMessage(string message)
-        {
-            if (message != null)
-            {
-                if (string.IsNullOrEmpty(this._message))
-                    this._message = message;
-                else
-                    this._message += ". " + message;
-            }
-        }
-
-        public void AddDetails(string details)
-        {
-            if (details != null)
-            {
-                if (string.IsNullOrEmpty(this._details))
-                    this._details = details;
-                else
-                    this._details += "\r\n" + details;
-                //this._details += "" + details;
-            }
-        }
-        public void AddDetails(C_Result element)
-        {
-            if (element != null)
-            {
-                if (string.IsNullOrEmpty(this._details))
-                    this._details = "\r\n" + element.Info();
-                else
-                    this._details += "\r\n" + element.Info();
-                //this._details += "" + element.Info();
-            }
-        }
-        public void AddDetails(C_Warning element)
-        {
-            if (element != null)
-            {
-                if (string.IsNullOrEmpty(this._details))
-                    this._details = element.Info();
-                else
-                    this._details += element.Info();
-                //this._details += "" + element.Info();
-            }
-        }
-        public void AddDetails(C_Error element)
-        {
-            if (element != null)
-            {
-                if (string.IsNullOrEmpty(this._details))
-                    this._details = element.Info();
-                else
-                    this._details += element.Info();
-                //this._details += "" + element.Info();
-            }
-        }
-
-        public void Add(E_ResultStatus status)
-        {
-            if (!this.Fail)
-                this.Status = status != E_ResultStatus.ND ? status : this.Status;
-        }
-        public void Add(string message, E_ResultStatus status)
-        {
-            this.Add(status);
-            this.AddMessage(message);
-        }
-        public void Add(string message, string details)
-        {
-            this.AddMessage(message);
-            this.AddDetails(message);
-        }
-        public void Add(string message, string details, E_ResultStatus status)
-        {
-            this.Add(message, status);
-            this.AddDetails(message);
-        }
-        public void Add(C_Result result)
-        {
-            this._type = result.Type;
-            this.Add(result.Message, result.Details, result.Status);
-        }
-        public void Add(C_Error error)
-        {
-            this._type = E_ResultType.ERROR;
-            this.Add(error.Message, error.Details, E_ResultStatus.FAIL);
-            this.Value = error ?? this.Value;
-        }
-        public void Add(C_Exception exception)
-        {
-            this._type = E_ResultType.EXCEPTION;
-            this.Add(exception.Message, exception.Details, E_ResultStatus.FAIL);
-            this._exception = exception;
-        }
-        public void Add(Exception exception)
-        {
-            this.Add(new C_Exception(exception));
-        }
+#region PUBLIC METHODS
 
         public string StatusToString()
-        {
-            switch (_status)
+            => this.Status switch
             {
-                case E_ResultStatus.SUCCESS:
-                    return "Success";
-                case E_ResultStatus.FAIL:
-                    return "Fail";
-                default:
-                    return "Undefined";
-            }
-        }
+                E_ResultStatus.OK => "Ok",
+                E_ResultStatus.FAIL => "Fail",
+                _ => "Undefined",
+            };
+
         public string TypeToString()
-        {
-            switch (_type)
+            => this._type switch
             {
-                case E_ResultType.EXCEPTION:
-                    return "Exception";
-                case E_ResultType.ERROR:
-                    return "Error";
-                case E_ResultType.WARNING:
-                    return "Warning";
-                case E_ResultType.ND:
-                    return "Undefined";
-                case E_ResultType.BOOLEAN:
-                    return "Boolean";
-                case E_ResultType.INT:
-                    return "Integer";
-                case E_ResultType.LONG:
-                    return "Long";
-                case E_ResultType.FLOAT:
-                    return "Float";
-                case E_ResultType.DOUBLE:
-                    return "Double";
-                case E_ResultType.STRING:
-                    return "String";
-                case E_ResultType.LIST:
-                    return "List";
-                case E_ResultType.OBJECT:
-                    return "Object";
-                default:
-                    return "Undefined";
-            }
-        }
+                E_ResultType.EXCEPTION => "Exception",
+                E_ResultType.ERROR => "Error",
+                E_ResultType.FAIL => "Fail",
+                E_ResultType.WARNING => "Warning",
+                E_ResultType.OK => "Ok",
+                _ => "Undefined",
+            };
 
         public override string ToString()
+            => this._type switch
+            {
+                E_ResultType.EXCEPTION => "Exception!!!",
+                E_ResultType.ERROR => "Error!!",
+                E_ResultType.FAIL => "Fail!",
+                E_ResultType.WARNING => "Warning!",
+                E_ResultType.OK => "Success!",
+                _ => "<Undefined>",
+            };
+
+        public string ToInfoLine()
         {
-            string result = this.DateTime.ToString() + "> [" + this.Status.ToString() + "]";
-            if (!string.IsNullOrEmpty(this.Title))
-            {
-                result += " " + this.Title;
-                if (!string.IsNullOrEmpty(this.Message))
-                    result += ": " + this.Message;
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(this.Message))
-                    result += " " + this.Message;
-            }
+            var text = new StringBuilder();
+            text.AppendLine(this.CreateDate.ToString() + "> " + this._type.ToString()
+                + (string.IsNullOrEmpty(this.Message) ? "." : ": " + this.Message + "."));
             if (this._exception != null)
-            {
-                result += "[Exception: " + this._exception.Message + "]";
-            }
-            result += ".";
-            return result;
+                text.AppendLine("Exception: " + this._exception.Message + ".");
+            return text.ToString();
         }
 
         public string Info()
         {
-            StringBuilder text = new StringBuilder();
-            string dateTime = this.DateTime.ToString();
+            var text = new StringBuilder();
+            string dateTime = this.CreateDate.ToString();
             text.AppendLine(dateTime + " > -- RESULT -----------------------------------------------------------------------");
-            text.AppendLine(dateTime + " | Status: " + this.Status.ToString() + ".");
-            text.AppendLine(dateTime + " | Type: '" + this.Type.ToString() + ".");
-            text.AppendLine(dateTime + " | Title: '" + (this.Title ?? "") + ".");
-            text.AppendLine(dateTime + " | Message: " + (this.Message ?? "") + ".");
-            text.AppendLine(dateTime + " | Details: " + (this.Details ?? "") + ".");
+            text.AppendLine(dateTime + " | Status: " + this.Status + ".");
+            text.AppendLine(dateTime + " | Type: " + this.Type + ".");
+            text.AppendLine(dateTime + " | WarningLevel: " + this.WarningLevel + ".");
+            text.AppendLine(dateTime + " | Message: " + this.Message + ".");
+            if (!string.IsNullOrEmpty(this.Details))
+                text.AppendLine(dateTime + " | Details: " + this.Details + ".");
             text.AppendLine(dateTime + " ^-------------------------------------------------------------------------------");
             if (this._exception != null)
-            {
-                text.AppendLine("Exception information: " + this.Exception.Info());
-            }
+                text.AppendLine("Exception information: " + this._exception.Info());
             return text.ToString();
         }
-        #endregion
 
-        #region PROTECTED CONSTRUCTORS
-        protected C_Result(string title, E_ResultType type, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, status);
-        }
-        protected C_Result(string title, E_ResultType type, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, message, status);
-        }
-        protected C_Result(string title, E_ResultType type, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, message, details, status);
-        }
-        protected C_Result(string title, E_ResultType type, C_Result result, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, result, status);
-        }
-        protected C_Result(string title, E_ResultType type, C_Result result, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, result, message, status);
-        }
-        protected C_Result(string title, E_ResultType type, C_Result result, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, result, message, details, status);
-        }
-        protected C_Result(string title, E_ResultType type, Object value, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, value, status);
-        }
-        protected C_Result(string title, E_ResultType type, Object value, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, value, message, status);
-        }
-        protected C_Result(string title, E_ResultType type, Object value, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(type, value, message, details, status);
-        }
-        protected C_Result(string title, Object value, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(value, status);
-        }
-        protected C_Result(string title, Object value, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(value, message, status);
-        }
-        protected C_Result(string title, Object value, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = title ?? "";
-            this.Set(value, message, details, status);
-        }
+#endregion
 
-        protected C_Result(E_ResultType type, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, status);
-        }
-        protected C_Result(E_ResultType type, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, message, status);
-        }
-        protected C_Result(E_ResultType type, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, message, details, status);
-        }
-        protected C_Result(E_ResultType type, C_Result result, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, result, status);
-        }
-        protected C_Result(E_ResultType type, C_Result result, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, result, message, status);
-        }
-        protected C_Result(E_ResultType type, C_Result result, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, result, message, details, status);
-        }
-        protected C_Result(E_ResultType type, Object value, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, value, status);
-        }
-        protected C_Result(E_ResultType type, Object value, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, value, message, status);
-        }
-        protected C_Result(E_ResultType type, Object value, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(type, value, message, details, status);
-        }
+#region PROTECTED METHODS
 
-        protected C_Result(C_Result result, Object value, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = result.Title ?? "";
-            this.Set(result, value, status);
-        }
-        protected C_Result(C_Result result, Object value, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(result, value, message, status);
-        }
-        protected C_Result(C_Result result, Object value, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(result, value, message, details, status);
-        }
-        protected C_Result(Object value, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(value, status);
-        }
-        protected C_Result(Object value, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(value, message, status);
-        }
-        protected C_Result(Object value, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this._title = "";
-            this.Set(value, message, details, status);
-        }
-        #endregion
-
-        #region PROTECTED METHODS
-        protected void Set(E_ResultType type, E_ResultStatus status = E_ResultStatus.SUCCESS)
+        protected void Set(E_ResultType type)
         {
             this._type = type;
-            this.Status = status;
         }
-        protected void Set(E_ResultType type, string message, E_ResultStatus status = E_ResultStatus.SUCCESS)
+
+        protected void Set(E_ResultStatus status)
         {
-            this.Set(type, status);
-            this._message = message;
+            this._type = status switch
+            {
+                E_ResultStatus.OK => E_ResultType.OK,
+                E_ResultStatus.FAIL => E_ResultType.FAIL,
+                _ => E_ResultType.ND,
+            };
         }
-        protected void Set(E_ResultType type, string message, string details, E_ResultStatus status = E_ResultStatus.SUCCESS)
+
+        protected void Set(string message, E_ResultType type = E_ResultType.FAIL)
         {
-            this.Set(type, message, status);
-            this.AddDetails(details);
+            this.Set(type);
+            this._message = message ?? string.Empty;
         }
-        protected void Set(E_ResultType type, C_Result result, E_ResultStatus status = E_ResultStatus.SUCCESS)
+
+        protected void Set(string message, E_ResultStatus status = E_ResultStatus.FAIL)
         {
-            this._type = type;
-            this.Status = status != E_ResultStatus.ND ? status : result.Status;
-            this._message = result.Message;
-            this.AddDetails(result.Details);
+            this.Set(status);
+            this._message = message ?? string.Empty;
+        }
+
+        protected void Set(string message, string details, E_ResultType type = E_ResultType.FAIL)
+        {
+            this.Set(message, type);
+            this._details = details ?? string.Empty;
+        }
+
+        protected void Set(string message, string details, E_ResultStatus status = E_ResultStatus.FAIL)
+        {
+            this.Set(message, status);
+            this._details = details ?? string.Empty;
+        }
+
+        protected void Set(I_Result result)
+        {
+            if (result is null)
+                return;
+
+            this._type = result.Type;
+            this._message = result.Message ?? string.Empty;
+            this._details = result.Details ?? string.Empty;
+
+            if (result is C_Result concrete)
+                this._exception = concrete.Exception;
+            else if (!result.HasException)
+                this._exception = null;
+        }
+
+        protected void Set(I_Result result, string message)
+        {
+            this.Set(result);
+            this._message = message ?? string.Empty;
+        }
+
+        protected void Set(C_Result result)
+        {
+            if (result is null)
+                return;
+
+            this.Set((I_Result)result);
+            this._exception = result.Exception;
+        }
+
+        protected void Set(C_Result result, string message)
+        {
+            this.Set(result);
+            this._message = message ?? string.Empty;
+        }
+
+        protected void Set(C_Warning warning)
+        {
+            this._type = E_ResultType.WARNING;
+            this._exception = null;
+            this._message = warning?.Message ?? string.Empty;
+            this._details = warning?.Details ?? string.Empty;
+        }
+
+        protected void Set(C_Warning warning, string message)
+        {
+            this.Set(warning);
+            this._message = message ?? string.Empty;
+        }
+
+        protected void Set(C_Error error)
+        {
+            this._type = E_ResultType.ERROR;
+            this._exception = null;
+            this._message = error?.Message ?? string.Empty;
+            this._details = error?.Details ?? string.Empty;
+        }
+
+        protected void Set(C_Error error, string message)
+        {
+            this.Set(error);
+            this._message = message ?? string.Empty;
+        }
+
+        protected void Set(C_Exception exception)
+        {
+            this._type = E_ResultType.EXCEPTION;
+            this._message = exception?.Message ?? string.Empty;
+            this._details = exception?.Details ?? string.Empty;
+            this._exception = exception;
+        }
+
+        protected void Set(C_Exception exception, string message)
+        {
+            this.Set(exception);
+            this._message = message ?? string.Empty;
+        }
+
+        protected void Set(Exception exception)
+            => this.Set(new C_Exception(exception));
+
+        protected void Set(Exception exception, string message)
+            => this.Set(new C_Exception(message, exception));
+
+        protected void SetOk()
+            => this.Set(E_ResultType.OK);
+
+        protected void SetOk(string message)
+            => this.Set(message, E_ResultType.OK);
+
+        protected void SetOk(string message, string details)
+            => this.Set(message, details, E_ResultType.OK);
+
+        protected void SetOk(C_Warning warning)
+            => this.Set(warning);
+
+        protected void SetOk(C_Warning warning, string message)
+            => this.Set(warning, message);
+
+        protected void SetFail()
+            => this.Set(E_ResultType.FAIL);
+
+        protected void SetFail(string message)
+            => this.Set(message, E_ResultType.FAIL);
+
+        protected void SetFail(string message, string details)
+            => this.Set(message, details, E_ResultType.FAIL);
+
+        protected void SetFail(C_Error error)
+            => this.Set(error);
+
+        protected void SetFail(C_Error error, string message)
+            => this.Set(error, message);
+
+        protected void SetFail(C_Exception exception)
+            => this.Set(exception);
+
+        protected void SetFail(C_Exception exception, string message)
+            => this.Set(exception, message);
+
+        protected void SetFail(Exception exception)
+            => this.Set(exception);
+
+        protected void SetFail(Exception exception, string message)
+            => this.Set(exception, message);
+
+#endregion
+
+#region PUBLIC STATIC METHODS — factories
+
+        public static C_Result Ok()
+            => new C_Result(E_ResultType.OK);
+
+        public static C_Result Ok(string message)
+            => new C_Result(message, E_ResultType.OK);
+
+        public static C_Result Ok(string message, string details)
+            => new C_Result(message, details, E_ResultType.OK);
+
+        public static C_Result Ok(C_Warning warning)
+            => new C_Result(warning);
+
+        public static C_Result Ok(C_Warning warning, string message)
+            => new C_Result(warning, message);
+
+        public static C_Result Fail()
+            => new C_Result(E_ResultType.FAIL);
+
+        public static C_Result Fail(string message)
+            => new C_Result(message, E_ResultType.FAIL);
+
+        public static C_Result Fail(string message, string details)
+            => new C_Result(message, details, E_ResultType.ERROR);
+
+        public static C_Result Fail(C_Error error)
+            => new C_Result(error);
+
+        public static C_Result Fail(C_Error error, string message)
+            => new C_Result(error, message);
+
+        public static C_Result Fail(C_Exception exception)
+            => new C_Result(exception);
+
+        public static C_Result Fail(C_Exception exception, string message)
+            => new C_Result(exception, message);
+
+        public static C_Result Fail(Exception exception)
+            => new C_Result(exception);
+
+        public static C_Result Fail(Exception exception, string message)
+            => new C_Result(exception, message);
+
+        public static C_Result<TValue> Ok<TValue>(TValue value)
+            => C_Result<TValue>.Ok(value);
+
+        public static C_Result<TValue> Ok<TValue>(TValue value, string message)
+            => C_Result<TValue>.Ok(value, message);
+
+        public static C_Result<TValue> Fail<TValue>()
+            => C_Result<TValue>.Fail();
+
+        public static C_Result<TValue> Fail<TValue>(string message)
+            => C_Result<TValue>.Fail(message);
+
+#endregion
+    }
+
+    /// <summary>
+    /// Typed operation result: <see cref="C_Result"/> plus payload <see cref="Value"/>.
+    /// <para><i>[ES] Resultado tipado: <see cref="C_Result"/> más payload <see cref="Value"/>.</i></para>
+    /// </summary>
+    public class C_Result<T> : C_Result, I_Result<T>
+    {
+#region PRIVATE FIELDS
+
+        private T _value = default!;
+
+#endregion
+
+#region PUBLIC PROPERTIES
+
+        public T Value
+        {
+            get => this._value;
+            protected set => this._value = value;
+        }
+
+#endregion
+
+#region CONSTRUCTORS
+
+        protected C_Result()
+            : base()
+        {
+        }
+
+        protected C_Result(E_ResultType type)
+            : base(type)
+        {
+        }
+
+        protected C_Result(E_ResultStatus status)
+            : base(status)
+        {
+        }
+
+        public C_Result(T value, E_ResultType type = E_ResultType.OK)
+            : base(type)
+        {
+            this._value = value;
+        }
+
+        public C_Result(T value, E_ResultStatus status = E_ResultStatus.OK)
+            : base(status)
+        {
+            this._value = value;
+        }
+
+        public C_Result(T value, string message, E_ResultType type = E_ResultType.OK)
+            : base(message, type)
+        {
+            this._value = value;
+        }
+
+        public C_Result(T value, string message, E_ResultStatus status = E_ResultStatus.OK)
+            : base(message, status)
+        {
+            this._value = value;
+        }
+
+        public C_Result(T value, string message, string details, E_ResultType type = E_ResultType.OK)
+            : base(message, details, type)
+        {
+            this._value = value;
+        }
+
+        public C_Result(T value, string message, string details, E_ResultStatus status = E_ResultStatus.OK)
+            : base(message, details, status)
+        {
+            this._value = value;
+        }
+
+        public C_Result(string message, E_ResultType type = E_ResultType.FAIL)
+            : base(message, type)
+        {
+        }
+
+        public C_Result(string message, E_ResultStatus status = E_ResultStatus.FAIL)
+            : base(message, status)
+        {
+        }
+
+        public C_Result(string message, string details, E_ResultType type = E_ResultType.FAIL)
+            : base(message, details, type)
+        {
+        }
+
+        public C_Result(string message, string details, E_ResultStatus status = E_ResultStatus.FAIL)
+            : base(message, details, status)
+        {
+        }
+
+        public C_Result(C_Result<T> result)
+            : base(result)
+        {
+            if (result is not null)
+                this._value = result.Value;
+        }
+
+        public C_Result(C_Result<T> result, string message)
+            : base(result, message)
+        {
+            if (result is not null)
+                this._value = result.Value;
+        }
+
+        public new C_Result<T> Clone()
+            => new C_Result<T>(this);
+
+        public C_Result(C_Warning warning)
+            : base(warning)
+        {
+        }
+
+        public C_Result(C_Warning warning, string message)
+            : base(warning, message)
+        {
+        }
+
+        public C_Result(C_Error error)
+            : base(error)
+        {
+        }
+
+        public C_Result(C_Error error, string message)
+            : base(error, message)
+        {
+        }
+
+        public C_Result(C_Exception exception)
+            : base(exception)
+        {
+        }
+
+        public C_Result(C_Exception exception, string message)
+            : base(exception, message)
+        {
+        }
+
+        public C_Result(Exception exception)
+            : base(exception)
+        {
+        }
+
+        public C_Result(Exception exception, string message)
+            : base(exception, message)
+        {
+        }
+
+#endregion
+
+#region PROTECTED METHODS
+
+        protected void Set(T value, E_ResultType type = E_ResultType.OK)
+        {
+            this._value = value;
+            this.Set(type);
+        }
+
+        protected void Set(T value, E_ResultStatus status = E_ResultStatus.OK)
+        {
+            this._value = value;
+            this.Set(status);
+        }
+
+        protected void Set(T value, string message, E_ResultType type = E_ResultType.OK)
+        {
+            this._value = value;
+            this.Set(message, type);
+        }
+
+        protected void Set(T value, string message, E_ResultStatus status = E_ResultStatus.OK)
+        {
+            this._value = value;
+            this.Set(message, status);
+        }
+
+        protected void Set(T value, string message, string details, E_ResultType type = E_ResultType.OK)
+        {
+            this._value = value;
+            this.Set(message, details, type);
+        }
+
+        protected void Set(T value, string message, string details, E_ResultStatus status = E_ResultStatus.OK)
+        {
+            this._value = value;
+            this.Set(message, details, status);
+        }
+
+        protected void Set(I_Result<T> result)
+        {
+            if (result is null)
+                return;
+
+            this.Set((I_Result)result);
             this._value = result.Value;
-            this._log_info = result.LogInfo;
-        }
-        protected void Set(E_ResultType type, C_Result result, string message, E_ResultStatus status = E_ResultStatus.SUCCESS)
-        {
-            this.Set(type, result, status);
-            this._message = message;
-        }
-        protected void Set(E_ResultType type, C_Result result, string message, string details, E_ResultStatus status = E_ResultStatus.SUCCESS)
-        {
-            this.Set(type, result, message, status);
-            this.AddDetails(details);
         }
 
-        protected void Set(E_ResultType type, Object value, E_ResultStatus status = E_ResultStatus.SUCCESS)
+        protected void Set(I_Result<T> result, string message)
         {
-            this.Set(type, status);
-            this._value = value;
-        }
-        protected void Set(E_ResultType type, Object value, string message, E_ResultStatus status = E_ResultStatus.SUCCESS)
-        {
-            this.Set(type, value, status);
-            this._message = message;
-        }
-        protected void Set(E_ResultType type, Object value, string message, string details, E_ResultStatus status = E_ResultStatus.SUCCESS)
-        {
-            this.Set(type, value, message, status);
-            this.AddDetails(details);
+            this.Set(result);
+            this.Message = message ?? string.Empty;
         }
 
-        protected void Set(C_Result result, Object value, E_ResultStatus status = E_ResultStatus.ND)
+        protected void Set(C_Result<T> result)
         {
-            this._type = E_ResultType.OBJECT;
-            this.Status = status != E_ResultStatus.ND ? status : result.Status;
-            this._message = result.Message;
-            this.AddDetails(result.Details);
-            this._value = value;
+            if (result is null)
+                return;
+
+            this.Set((I_Result<T>)result);
         }
-        protected void Set(C_Result result, Object value, string message, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this.Set(result, value, status);
-            this._message = message ?? this._message;
-        }
-        protected void Set(C_Result result, Object value, string message, string details, E_ResultStatus status = E_ResultStatus.ND)
-        {
-            this.Set(result, value, message, status);
-            this.AddDetails(details);
-        }
-        protected void Set(Object value, E_ResultStatus status = E_ResultStatus.SUCCESS)
-        {
-            this.Set(E_ResultType.OBJECT, value, status);
-        }
-        protected void Set(Object value, string message, E_ResultStatus status = E_ResultStatus.SUCCESS)
-        {
-            this.Set(E_ResultType.OBJECT, value, message, status);
-        }
-        protected void Set(Object value, string message, string details, E_ResultStatus status = E_ResultStatus.SUCCESS)
-        {
-            this.Set(E_ResultType.OBJECT, value, message, details, status);
-        }
-        #endregion
+
+        protected void SetOk(T value)
+            => this.Set(value, E_ResultType.OK);
+
+        protected void SetOk(T value, string message)
+            => this.Set(value, message, E_ResultType.OK);
+
+        protected void SetOk(T value, string message, string details)
+            => this.Set(value, message, details, E_ResultType.OK);
+
+#endregion
+
+#region PUBLIC STATIC METHODS — factories
+
+        public static new C_Result<T> Ok(T value)
+            => new C_Result<T>(value, E_ResultType.OK);
+
+        public static new C_Result<T> Ok(T value, string message)
+            => new C_Result<T>(value, message, E_ResultType.OK);
+
+        public static new C_Result<T> Ok(T value, string message, string details)
+            => new C_Result<T>(value, message, details, E_ResultType.OK);
+
+        public static new C_Result<T> Ok(C_Warning warning)
+            => new C_Result<T>(warning);
+
+        public static new C_Result<T> Ok(C_Warning warning, string message)
+            => new C_Result<T>(warning, message);
+
+        public static new C_Result<T> Fail()
+            => new C_Result<T>(E_ResultType.FAIL);
+
+        public static new C_Result<T> Fail(string message)
+            => new C_Result<T>(message, E_ResultType.FAIL);
+
+        public static new C_Result<T> Fail(string message, string details)
+            => new C_Result<T>(message, details, E_ResultType.ERROR);
+
+        public static new C_Result<T> Fail(C_Error error)
+            => new C_Result<T>(error);
+
+        public static new C_Result<T> Fail(C_Error error, string message)
+            => new C_Result<T>(error, message);
+
+        public static new C_Result<T> Fail(C_Exception exception)
+            => new C_Result<T>(exception);
+
+        public static new C_Result<T> Fail(C_Exception exception, string message)
+            => new C_Result<T>(exception, message);
+
+        public static new C_Result<T> Fail(Exception exception)
+            => new C_Result<T>(exception);
+
+        public static new C_Result<T> Fail(Exception exception, string message)
+            => new C_Result<T>(exception, message);
+
+#endregion
     }
 }

@@ -1,74 +1,98 @@
-﻿using _1_LibraryClassesNet10.Enums;
-using _1_LibraryClassesNet10.Time;
-using System;
+using _1_LibraryClasses.Event;
 using System.Text;
 
-namespace _1_LibraryClassesNet10.Event
+namespace _1_LibraryClasses.Event
 {
-    public class C_Warning
+    /// <summary>
+    /// Warning notice (non-fatal issue).
+    /// <para><i>[ES] Aviso de advertencia (problema no fatal).</i></para>
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// var w = new C_Warning("Quota high", "90% used", E_ErrorType.ND);
+    /// var fromError = new C_Warning(existingError, "Treated as warning");
+    /// </code>
+    /// </example>
+    public class C_Warning : C_Event, I_Warning
     {
-        private C_DateTime _dateTime = new C_DateTime(System.DateTime.Now);
-        private E_ErrorType _type = E_ErrorType.ND;
-        private string _message = "";
-        private string _details = "";
+        /// <summary>
+        /// Gets the related error classification (if any).
+        /// <para><i>[ES] Obtiene la clasificación de error relacionada (si aplica).</i></para>
+        /// </summary>
+        public E_ErrorType Type { get; protected set; } = E_ErrorType.ND;
 
-        public C_DateTime DateTime { get => _dateTime; }
-        public E_ErrorType ErrorType { get => this._type; }
-        public string Message { get => _message; }
-        public string Details { get => _details; }
+        /// <summary>Obsolete alias of <see cref="Type"/>.</summary>
+        [Obsolete("Use Type instead of ErrorType.")]
+        public E_ErrorType ErrorType => Type;
 
+        #region CONSTRUCTORS
+
+        /// <summary>
+        /// Initializes a new warning with a message.
+        /// <para><i>[ES] Inicializa una nueva advertencia con un mensaje.</i></para>
+        /// </summary>
         public C_Warning(string message, E_ErrorType errorType = E_ErrorType.ND)
+            : base(E_EventType.WARNING, message, null)
         {
-            this._type = errorType;
-            this._message = message;
+            Type = errorType;
         }
 
+        /// <summary>
+        /// Initializes a new warning with message and details.
+        /// <para><i>[ES] Inicializa una nueva advertencia con mensaje y detalles.</i></para>
+        /// </summary>
         public C_Warning(string message, string details, E_ErrorType errorType = E_ErrorType.ND)
+            : base(E_EventType.WARNING, message, details)
         {
-            this._type = errorType;
-            this._message = message;
-            this._details = details;
+            Type = errorType;
         }
 
+        /// <summary>
+        /// Initializes a warning from an existing <see cref="C_Error"/>.
+        /// <para><i>[ES] Inicializa una advertencia a partir de un <see cref="C_Error"/> existente.</i></para>
+        /// </summary>
         public C_Warning(C_Error error, string message = null)
+            : base(E_EventType.WARNING, message ?? error?.Message ?? "", error?.Details)
         {
-            this._type = E_ErrorType.ERROR;
-            this._message = message ?? error.Message;
-            this._details = error.Details;
+            Type = error?.Type ?? E_ErrorType.ERROR;
         }
 
+        /// <summary>
+        /// Initializes a warning from a <see cref="C_Exception"/>.
+        /// <para><i>[ES] Inicializa una advertencia a partir de un <see cref="C_Exception"/>.</i></para>
+        /// </summary>
         public C_Warning(C_Exception exception, string errorMessage = null)
+            : base(E_EventType.WARNING, errorMessage ?? exception?.Message ?? "", exception?.Details)
         {
-            this._type = E_ErrorType.EXCEPTION;
-            this._message = errorMessage ?? exception.Message;
-            this._details = exception.Details;
+            Type = E_ErrorType.EXCEPTION;
         }
+
+        /// <summary>
+        /// Initializes a warning from a <see cref="Exception"/>.
+        /// <para><i>[ES] Inicializa una advertencia a partir de un <see cref="Exception"/>.</i></para>
+        /// </summary>
         public C_Warning(Exception exception, string errorMessage = null)
+            : base(
+                E_EventType.WARNING,
+                errorMessage ?? exception?.Message ?? "",
+                exception is C_Exception cex ? cex.Details : exception?.ToString())
         {
-            this._type = E_ErrorType.EXCEPTION;
-            this._message = errorMessage ?? exception.Message;
-            this._details = ((C_Exception)exception).Details;
+            Type = E_ErrorType.EXCEPTION;
         }
 
-        public override string ToString()
+        public C_Warning(C_Warning? source)
+            : base(source)
         {
-            string result = this.DateTime.ToString() + "> WARNING!: [Error type: " + this.ErrorType.ToString() + "];";
-            if (!string.IsNullOrEmpty(this.Message))
-                result += ": " + this.Message;
-            result += ".";
-            return result;
+            Type = source?.Type ?? E_ErrorType.ND;
         }
 
-        public string Info()
-        {
-            StringBuilder text = new StringBuilder();
-            string dateTime = this.DateTime.ToString();
-            text.AppendLine(dateTime + " > -- WARNING! ----------------------------------------------------------------------");
-            text.AppendLine(dateTime + " | Error Type: " + this.ErrorType.ToString() + ".");
-            text.AppendLine(dateTime + " | Message: " + (this.Message ?? "") + ".");
-            text.AppendLine(dateTime + " | Details: " + (this.Details ?? "") + ".");
-            text.AppendLine(dateTime + " ^-----------------------------------------------------------------------------------");
-            return text.ToString();
-        }
+        #endregion
+
+        #region PUBLIC METHODS
+
+        public C_Warning Clone()
+            => new C_Warning(this);
+
+        #endregion
     }
 }

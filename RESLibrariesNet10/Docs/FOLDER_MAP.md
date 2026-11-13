@@ -13,7 +13,9 @@ RESLibrariesNet10/                 (repo)
 ├── README.md                      → enlace corto al host
 ├── RESLibrariesNet10.slnx
 ├── 1_LibraryClasses/
+├── 2_LibraryHelpers/
 ├── 2_LibraryUtils/
+
 ├── 3_LibraryServices/
 └── RESLibrariesNet10/             ← proyecto host + Docs de solución
     ├── README.md
@@ -32,6 +34,11 @@ RESLibrariesNet10/                 (repo)
 
 ## 1_LibraryClasses
 
+Incluye **`Log/`**: modelos reutilizables de logging (`C_LogLine`, `C_LogStore`, …).
+La fachada global **`GLogger`** vive en `2_LibraryUtils/GlobalLogger`.
+
+
+
 ```text
 1_LibraryClasses/
 ├── README.md
@@ -40,33 +47,31 @@ RESLibrariesNet10/                 (repo)
 │   C_Item, C_ValueDated, C_Permissions, C_Action, C_Pagination
 ├── Interfaces/
 ├── Enums/
-├── Event/                # helpers / soporte (pendiente vs Utils)
-├── Result/
-├── List/
-├── Time/
-├── Url/
-└── Files/                # C_FilePath
+├── Event/                # soporte (errores, avisos)
+└── Result/               # resultados de operaciones
 ```
 
 | Carpeta | Rol |
 |---------|-----|
 | **Base** | Dominio reutilizable |
 | **Interfaces / Enums** | Contratos y enumeraciones |
-| **Event, Result, List, Time, Url, Files** | Soporte / helpers |
+| **Event, Result** | Soporte transversal (aún en Classes) |
 
 `Database/` eliminada. Sin `Docs/` local: la documentación de diseño está en el host.
 
 ---
 
-## 2_LibraryUtils
+## 2_LibraryHelpers
 
 ```text
-2_LibraryUtils/
+2_LibraryHelpers/
+├── 2_LibraryUtils/
+
 ├── Converters/       # C_JsonConverter
-├── FileManager/      # C_Mng_Files
+├── File/           # C_File, C_FilePath
 ├── Logger/           # C_Logger, modelos, enums
-├── TextManager/      # C_Mng_String, C_Mng_Text
-└── Timer/            # C_Timer
+├── Text/      # C_String, C_Text
+└── Timer/            # C_Hlp_Timer
 ```
 
 ---
@@ -91,3 +96,40 @@ RESLibrariesNet10/
 ├── Form1.*
 └── Program.cs
 ```
+
+
+## 2_LibraryUtils
+
+```text
+2_LibraryUtils/
+└── GlobalLogger/
+    ├── GLogger.cs
+    ├── GDebugLogger.cs
+    ├── Enums/
+    ├── Managers/          # C_StackTrace (o mover a Helpers si se prefiere)
+    └── Models/
+```
+
+Logger **global** (estático). Services puede usarlo; Helpers **no** referencia Utils (evita ciclo).
+
+
+### Log (1_LibraryClasses)
+
+```text
+Log/
+├── E_LogLineType.cs
+├── E_LogAddLineMode.cs
+├── C_LogLine.cs              : I_LogLine
+├── C_LoggedLine.cs           : I_LoggedLine
+├── C_LogStore.cs       : I_LogStore
+├── C_LogException.cs
+├── C_StackTraceInfo.cs       : I_StackTraceInfo
+├── C_Result_Logged.cs
+└── Interfaces/
+    ├── I_LogLine.cs
+    ├── I_LoggedLine.cs
+    ├── I_LogStore.cs
+    └── I_StackTraceInfo.cs
+```
+
+Namespace: `_1_LibraryClasses.Log` (clases, enums e interfaces).

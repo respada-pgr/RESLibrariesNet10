@@ -1,12 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>_1_LibraryClassesNet10</RootNamespace>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>false</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>_1_LibraryClasses</RootNamespace>
+    <AssemblyName>1_LibraryClasses</AssemblyName>
   </PropertyGroup>
 
 </Project>

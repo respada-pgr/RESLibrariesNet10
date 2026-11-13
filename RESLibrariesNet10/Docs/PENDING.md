@@ -1,91 +1,126 @@
-# Pendientes / backlog — RESLibrariesNet10 (solución completa)
+# Pendientes / backlog — RESLibrariesNet10
 
-Lista de temas a valorar o completar en **cualquier proyecto** de la solución (`1_LibraryClasses`, `2_LibraryUtils`, `3_LibraryServices`, host).
+Lista de temas a valorar o completar en **cualquier proyecto** de la solución  
+(`1_LibraryClasses`, `2_LibraryHelpers`, `3_LibraryServices`, `4_LibraryUtils`, host).
 
-**Contexto:** librerías **genéricas reutilizables** para cualquier aplicación .NET que las referencie.
+**Contexto:** librerías **genéricas reutilizables** para aplicaciones .NET.
 
-**Ubicación:** proyecto principal **`RESLibrariesNet10/Docs/PENDING.md`** (Visual Studio no gestiona bien carpetas físicas solo a nivel de solución).
-
----
-
-## Tareas priorizadas (2026-09-21)
-
-### Alta
-
-- [x] Estructura de carpetas del repo `dev` reproducida en artifacts (Base, Interfaces, Enums, Database, Event, Result, List, Time, Url, Files)
-- [x] **README / mapa de carpetas:** `1_LibraryClasses/README.md` + `1_LibraryClasses/Docs/FOLDER_MAP.md`; README de solución en `RESLibrariesNet10/`.
-
-### Media
-
-- [x] ARCHITECTURE y FOLDER_MAP a nivel solución (capítulos por proyecto)
-- [x] **Docs de solución centralizados** en `RESLibrariesNet10/Docs/`: PENDING, CONVENTIONS, ARCHITECTURE, FOLDER_MAP, CHANGELOG, DEV_PROMPT (capítulos por proyecto donde aplica).
-- [x] **`C_RegBBDD_*` eliminadas**; `C_Pagination` movida a `Base/`; carpeta `Database/` eliminada.
-- [ ] **Unificar estilo de enums**: MAYÚSCULAS en todos los miembros, o documentar excepciones (`E_Language`, `E_Priority`, `E_Result*`, etc.).
-
-### Baja
-
-- [ ] **Helpers / utilidades fuera de `Base`**: decidir qué queda en `1_LibraryClasses` y qué pasa a `2_LibraryUtils`.
-  - **Claramente helpers (candidatos a Utils):** `C_FilePath` (`Files/`), `C_Url` / `C_Uri` (`Url/`), `C_DateTime` / `C_NullDateTime` (`Time/`), `C_List_String` (`List/`), `C_Pagination` (ahora en `Base/`).
-  - **Soporte transversal (valorar Classes vs Utils):** `C_Result*` (`Result/`), `C_Error` / `C_Warning` / `C_Exception` / `C_EventArgs` (`Event/`).
-  - **Ya en Utils (OK):** `C_Mng_Files`, `C_Mng_String` / `C_Mng_Text`, `C_JsonConverter`, Logger, `C_Timer`.
-  - Criterio: dominio/núcleo → `1_LibraryClasses/Base`; ayuda técnica (rutas, texto, IO, fechas wrapper) → `2_LibraryUtils`.
-- [ ] **Inventariar** `Event` / `Result` / `List` / `Time` / `Url` / `Files` (ligado al punto anterior): documentar rol o mover.
-- [ ] **Actualizar `ARCHITECTURE.md`** al estado real (`Base/`, Register, sin `I_Entity` no genérica). Dejarlo para cuando la solución esté más pulida.
-- [ ] **Tests del núcleo**: Id, `Init`, rehidratación de Register, Permissions.
+**Ubicación:** `RESLibrariesNet10/Docs/PENDING.md`
 
 ---
 
-## Sin prioridad asignada
+## Checkpoint (2026-10-12) — orden por dependencias
 
-### Inventario de diseño (acordado)
+- [x] **`2_LibraryUtils`** (antes 4) — depende de Classes + Helpers  
+- [x] **`3_LibraryServices`** (antes 3) — depende de Classes + Helpers + Utils  
 
-**Núcleo (mantener)**  
-- `I_Initialized` → `I_Identifiable<TId>` → `I_Entity<TId>` → `I_Register<TId>`  
-- `I_Auditable`, `I_SoftDeletable` (dentro de Register)  
-- `C_Entity*`, `C_Register*`  
-- `I_Id` / `C_Id*` si se encapsulan identificadores  
-
-**Muy recomendable**  
-- `I_Named`  
-- `C_RegisterNamed*` / `C_EntityNamed*` si muchas entidades llevan nombre  
-
-**Opcional**  
-- `I_Descriptible`, `I_Sortable`, `I_Initializable` (solo donde haga falta)  
-
-**No crear de momento**  
-- `I_Activatable`, `I_Codeable`, `I_Versionable`, `I_Validatable`, `I_Measurable`, etc. hasta que varios tipos las compartan  
-
-**C_Entity vs C_Register**  
-```text
-C_Entity*     → identidad de entidad (sin auditoría ni soft-delete obligatorios)
-C_Register*   → Entity + CreateDate/UpdateDate + IsDeleted/DeleteDate
-```
-- Sin soft-delete / auditoría completa → `C_Entity` / `C_EntityNamed`  
-- Registro de negocio completo → `C_Register` / `C_RegisterNamed`  
-
-### Otros (sin prioridad)
-
-- [ ] Valorar CQRS (ver sección siguiente); no adoptar hasta que haga falta  
-- [ ] ¿Hace falta `C_IdNamed`? (suele no: el nombre va en la entidad)  
-- [ ] Primera entidad de ejemplo en un proyecto consumidor  
-- [ ] Valorar `I_Sortable` en alguna base o solo por entidad  
-- [ ] Sincronizar diseño documentado ↔ Visual Studio ↔ rama `dev`  
-- [ ] Actualizar `DEV_PROMPT.md` / docs auxiliares cuando cambie el núcleo  
-- [x] Inventario de interfaces/clases del núcleo revisado  
+Orden de compilación: **1 Classes → 2 Helpers → 3 Utils → 4 Services → Host**
 
 ---
 
-## Referencia: CQRS (sin prioridad)
 
-Separar **comandos** (escritura) y **consultas** (lectura) solo si el modelo único empieza a doler.
+## Checkpoint (2026-10-12) — renumeración post-fusión
 
-**Recomendación:** un solo modelo `C_*` + repositorios clásicos; DTOs de lectura solo donde la UI lo pida.
+- [x] `3_LibraryHelpers` → **`2_LibraryHelpers`**
+- [x] `3_LibraryServices` → **`3_LibraryServices`**
+- [x] `5_LibraryUtils` → **`4_LibraryUtils`**
+
+Orden: **1 Classes → 2 Helpers → 3 Services → 4 Utils → Host**  
+(Nota: Utils puede depender de Helpers; Services de Classes/Helpers/Utils según referencias.)
 
 ---
 
-## Referencias rápidas de contratos actuales
 
-```text
-C_EntityNamed<TId>   : C_Entity<TId>, I_Entity<TId>, I_Named     → Guid/Int/Long/String
-C_RegisterNamed<TId> : C_Register<TId>, I_Register<TId>, I_Named → Guid/Int/Long/String
-```
+## Checkpoint (2026-10-12) — unificar Base + Classes
+
+- [x] **`1_LibraryBase` + `2_LibraryClasses` → `1_LibraryClasses`** (proyecto único)
+- [x] Helpers de texto: `2_LibraryHelpers/Text` → **`1_LibraryClasses/Text/Helpers`**
+  - Namespace: `_1_LibraryClasses.Text` (`C_Hlp_Text`, `C_Hlp_String`)
+- [x] Solución y ProjectReference actualizados (sin Base/Classes separados)
+
+Orden de compilación: **Classes → Helpers → Utils → Services → Host**
+
+---
+
+
+
+## Checkpoint (2026-10-08) — división Base / Classes
+
+- [x] **`1_LibraryBase`**: tipos **sin** `using System.*` / externos (44 ficheros)
+- [x] **`2_LibraryClasses`**: resto de lo que era `1_LibraryClasses` (32 ficheros); referencia a Base
+- [x] Renumeración: Helpers→**3**, Services→**4**, Utils→**5**
+- [x] Mismo `RootNamespace` / namespaces de código `_1_LibraryClasses` en Base y Classes
+- [x] Solución y ProjectReference actualizados
+
+Orden de compilación: Base → Classes → Helpers → Utils → Services → Host
+
+## Checkpoint (2026-10-07)
+
+### Hecho recientemente
+- [x] Namespace raíz para Entity/Item/Pagination/ValueDated: `_1_LibraryClasses` (sin `.Base` / `.Classes`)
+- [x] `C_EventArgs` / `C_Exception`: propiedad **`CreateDate`** (antes `DateTime`)
+- [x] Regiones CONVENTIONS §4 en `C_Entity`, `C_Register`, `C_EntityNamed`, `C_RegisterNamed` (copias `.old` conservadas)
+- [x] Helpers File documentados; modelos Log documentados; GLogger / C_Srv_Logger documentados
+- [x] Log: modelos en `1_LibraryClasses/Log`; loggers en `4_LibraryUtils/Log`; `C_Hlp_DebugLog` / `C_Hlp_StackTrace` en Classes
+- [x] Named sin `I_Named`: copia de nombre solo si el origen es tipo Named y `Name` no vacío
+
+### Foco actual
+Pulir **1_LibraryClasses** y mantener Utils/Services estables.
+
+---
+
+## Alta
+| Tarea | Notas |
+|-------|--------|
+| README de `1_LibraryClasses` (qué es la lib + mapa de carpetas) | Documentación de entrada |
+| Revisar usings residuales / ImplicitUsings tras cambio de namespace | Compilar en Visual Studio |
+
+
+
+## Checkpoint (2026-11-12) — copia / Clone / CreateDate
+
+### Convención deseada (clases con estado)
+- [ ] **Constructor de copia** `C_Foo(C_Foo source)`: copia los valores de la instancia; **no** reutilizar el `CreateDate` del origen (si la clase tiene `CreateDate`).
+- [ ] **Método `Clone()`**: nueva instancia equivalente; **`CreateDate` nuevo** (momento del clone), no el del original.
+- [ ] Aplicar de forma sistemática en tipos de dominio (`C_Result*`, `C_Word`/`C_String`/`C_Text`, `C_Entity`/`C_Register`, Log, Event, …) según tengan sentido.
+
+### Revisar modelo de `CreateDate` (prioridad media)
+- [ ] **Cuándo se asigna** `CreateDate` (ctor vacío, factorías, `Set*`, copia, clone) no está claro ni unificado.
+- [ ] Valorar: ¿inmutable tras creación? ¿solo en factorías? ¿`Init` lo toca? ¿Result/Event/Register comparten la misma regla?
+- [ ] Documentar la regla en CONVENTIONS cuando se decida.
+- [ ] Evitar que el constructor de copia o mutaciones posteriores “refresquen” la fecha sin querer (salvo `Clone`, que sí debe llevar fecha nueva).
+
+
+## Media
+| Tarea | Notas |
+|-------|--------|
+| Unificar estilo de enums (MAYÚSCULAS en miembros) | Objetivo de convención |
+| Ordenar regiones de `C_Result` al estándar CONVENTIONS §4 | Ya tiene regiones, menos limpias |
+| Cuando se confirmen `.old`, borrar `C_Entity.cs.old` etc. | Limpieza |
+
+## Baja
+| Tarea | Notas |
+|-------|--------|
+| Actualizar `ARCHITECTURE.md` al estado real | Base, Register, Log, sin GDC |
+| Tests del núcleo (Id, Init, Register rehidratación, Permissions, Logger) | |
+| Valorar CQRS / FluentResults | Aparcar hasta núcleo estable |
+| Inventariar Event / Result / List / Time / Url y documentar | |
+
+## Sin prioridad (ideas)
+- `I_AuditEntry` / auditoría con usuario por acción
+- Más especializaciones o helpers de texto
+- Logger de fichero con cola asíncrona (descartado por ahora)
+
+---
+
+## Estructura de capas (orden de compilación)
+1. `1_LibraryBase` — contratos/entidades sin dependencias System explícitas  
+2. `2_LibraryClasses` — Log/Event/Result/… con System (Text, Xml, Json…)  
+3. `2_LibraryHelpers` — File, Text, Timer…  
+4. `4_LibraryUtils` — GLogger, C_Logger_Memory/File, C_Srv_Logger  
+5. `3_LibraryServices` — Crypto, FileService…  
+6. Host `RESLibrariesNet10`
+
+## Convención de regiones (resumen)
+`PRIVATE FIELDS` → `PUBLIC PROPERTIES` → `CONSTRUCTORS` → `PUBLIC METHODS` → `PRIVATE METHODS`  
+Ver `Docs/CONVENTIONS.md` §4.

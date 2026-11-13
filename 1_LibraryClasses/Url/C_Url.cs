@@ -1,8 +1,9 @@
-﻿using System.Text;
+using System.Text;
 
-namespace _1_LibraryClassesNet10.Url
+using _1_LibraryClasses;
+namespace _1_LibraryClasses.Url
 {
-    public class C_Url
+    public class C_Url : I_Infoable
     {
         public enum E_UrlType { ND = -1, File, Web }
 

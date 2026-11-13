@@ -1,6 +1,5 @@
-﻿using _1_LibraryClassesNet10.Interfaces;
 
-namespace _1_LibraryClassesNet10.Base
+namespace _1_LibraryClasses
 {
     /// <summary>
     /// Represents the abstract base class for domain entities with a generic identifier, implementing <see cref="I_Entity{TId}"/>.
@@ -35,6 +34,8 @@ namespace _1_LibraryClassesNet10.Base
         /// The unique identifier of type <typeparamref name="TId"/>; <see langword="null"/> or <c>default</c> if unassigned.
         /// <para><i>[ES] El identificador único de tipo <typeparamref name="TId"/>; <see langword="null"/> o <c>default</c> si no está asignado.</i></para>
         /// </value>
+#region PUBLIC PROPERTIES
+
         public TId? Id { get; protected set; }
 
         /// <summary>
@@ -69,6 +70,9 @@ namespace _1_LibraryClassesNet10.Base
         /// var order = new C_Order();
         /// </code>
         /// </example>
+#endregion
+#region CONSTRUCTORS
+
         protected C_Entity()
         {
             this.Id = default;
@@ -109,7 +113,17 @@ namespace _1_LibraryClassesNet10.Base
         {
             this.Id = source is null ? default : source.Id;
         }
-    }
+
+        /// <summary>
+        /// Copy constructor from the same entity type.
+        /// <para><i>[ES] Constructor de copia del mismo tipo de entidad.</i></para>
+        /// </summary>
+        protected C_Entity(C_Entity<TId>? source) : this(source is null ? default : source.Id)
+        {
+        }
+
+#endregion
+}
 
     /// <summary>
     /// Specialized abstract base class for domain entities using <see cref="Guid"/> as identifier.
@@ -139,6 +153,8 @@ namespace _1_LibraryClassesNet10.Base
         /// <para><i>[ES] Obtiene el identificador único como <see cref="Guid"/> no anulable.
         /// <see cref="Guid.Empty"/> significa no inicializado.</i></para>
         /// </summary>
+#region PUBLIC PROPERTIES
+
         public new Guid Id
         {
             get
@@ -159,6 +175,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes a new instance with a newly generated <see cref="Guid"/>.
         /// <para><i>[ES] Inicializa una nueva instancia con un <see cref="Guid"/> recién generado.</i></para>
         /// </summary>
+#endregion
+#region CONSTRUCTORS
+
         protected C_EntityGuid() : base(Guid.NewGuid()) { }
 
         /// <summary>
@@ -180,6 +199,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes with a newly generated <see cref="Guid"/>. Throws if already initialized.
         /// <para><i>[ES] Inicializa con un <see cref="Guid"/> nuevo. Lanza si ya está inicializado.</i></para>
         /// </summary>
+#endregion
+#region PUBLIC METHODS
+
         public Guid Init()
         {
             if (this.IsInitialized)
@@ -202,7 +224,8 @@ namespace _1_LibraryClassesNet10.Base
             this.Id = value;
             return value;
         }
-    }
+#endregion
+}
 
     /// <summary>
     /// Specialized abstract base class for domain entities using <see cref="int"/> as identifier.
@@ -229,6 +252,8 @@ namespace _1_LibraryClassesNet10.Base
         /// Gets the unique identifier. <c>0</c> means not initialized.
         /// <para><i>[ES] Obtiene el identificador único. <c>0</c> significa no inicializado.</i></para>
         /// </summary>
+#region PUBLIC PROPERTIES
+
         public new int Id
         {
             get
@@ -249,6 +274,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes a new instance as not initialized (<c>0</c>).
         /// <para><i>[ES] Inicializa una nueva instancia como no inicializada (<c>0</c>).</i></para>
         /// </summary>
+#endregion
+#region CONSTRUCTORS
+
         protected C_EntityInt() : base(0) { }
 
         /// <summary>
@@ -268,6 +296,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes with the specified value. Throws if already initialized or value is <c>0</c>.
         /// <para><i>[ES] Inicializa con el valor indicado. Lanza si ya está inicializado o el valor es <c>0</c>.</i></para>
         /// </summary>
+#endregion
+#region PUBLIC METHODS
+
         public int Init(int value)
         {
             if (this.IsInitialized)
@@ -277,7 +308,8 @@ namespace _1_LibraryClassesNet10.Base
             this.Id = value;
             return value;
         }
-    }
+#endregion
+}
 
     /// <summary>
     /// Specialized abstract base class for domain entities using <see cref="long"/> as identifier.
@@ -304,6 +336,8 @@ namespace _1_LibraryClassesNet10.Base
         /// Gets the unique identifier. <c>0L</c> means not initialized.
         /// <para><i>[ES] Obtiene el identificador único. <c>0L</c> significa no inicializado.</i></para>
         /// </summary>
+#region PUBLIC PROPERTIES
+
         public new long Id
         {
             get
@@ -324,6 +358,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes a new instance as not initialized (<c>0L</c>).
         /// <para><i>[ES] Inicializa una nueva instancia como no inicializada (<c>0L</c>).</i></para>
         /// </summary>
+#endregion
+#region CONSTRUCTORS
+
         protected C_EntityLong() : base(0L) { }
 
         /// <summary>
@@ -343,6 +380,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes with the specified value. Throws if already initialized or value is <c>0L</c>.
         /// <para><i>[ES] Inicializa con el valor indicado. Lanza si ya está inicializado o el valor es <c>0L</c>.</i></para>
         /// </summary>
+#endregion
+#region PUBLIC METHODS
+
         public long Init(long value)
         {
             if (this.IsInitialized)
@@ -352,7 +392,8 @@ namespace _1_LibraryClassesNet10.Base
             this.Id = value;
             return value;
         }
-    }
+#endregion
+}
 
     /// <summary>
     /// Specialized abstract base class for domain entities using <see cref="string"/> as identifier.
@@ -379,6 +420,8 @@ namespace _1_LibraryClassesNet10.Base
         /// Gets the unique identifier. <see cref="string.Empty"/> means not initialized.
         /// <para><i>[ES] Obtiene el identificador único. <see cref="string.Empty"/> significa no inicializado.</i></para>
         /// </summary>
+#region PUBLIC PROPERTIES
+
         public new string Id
         {
             get => base.Id ?? string.Empty;
@@ -395,6 +438,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes a new instance as not initialized (<see cref="string.Empty"/>).
         /// <para><i>[ES] Inicializa una nueva instancia como no inicializada (<see cref="string.Empty"/>).</i></para>
         /// </summary>
+#endregion
+#region CONSTRUCTORS
+
         protected C_EntityString() : base(string.Empty) { }
 
         /// <summary>
@@ -414,6 +460,9 @@ namespace _1_LibraryClassesNet10.Base
         /// Initializes with the specified value. Throws if already initialized or value is null/empty.
         /// <para><i>[ES] Inicializa con el valor indicado. Lanza si ya está inicializado o el valor es null/vacío.</i></para>
         /// </summary>
+#endregion
+#region PUBLIC METHODS
+
         public string Init(string value)
         {
             if (this.IsInitialized)
@@ -423,5 +472,6 @@ namespace _1_LibraryClassesNet10.Base
             this.Id = value;
             return value;
         }
-    }
+#endregion
+}
 }

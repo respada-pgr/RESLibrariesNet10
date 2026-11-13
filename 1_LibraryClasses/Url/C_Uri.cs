@@ -1,10 +1,11 @@
-﻿using _1_LibraryClassesNet10.Files;
+using _1_LibraryClasses.File;
 using System.Text;
 
-namespace _1_LibraryClassesNet10.Url
+using _1_LibraryClasses;
+namespace _1_LibraryClasses.Url
 {
-    
-    public class C_Uri
+
+    public class C_Uri : I_Infoable
     {
         public enum E_UriType { ND = -1, File, Web }
 
@@ -32,7 +33,9 @@ namespace _1_LibraryClassesNet10.Url
 
         public C_Url Url { get => this._url.Type == C_Url.E_UrlType.Web ? this._url : null; }
 
-        public C_FilePath File { get => this._url.Type == C_Url.E_UrlType.File ? new C_FilePath(this._url.Uri) : null; }
+        public C_File File { get => this._url.Type == C_Url.E_UrlType.File ? new C_File(this._url.Uri) : null; }
+
+        #region CONSTRUCTORS
 
         public C_Uri()
         {
@@ -48,23 +51,34 @@ namespace _1_LibraryClassesNet10.Url
             this._url = new C_Url(uri);
         }
 
+        /// <summary>
+        /// Creates a URI wrapper from an OS-agnostic <see cref="C_StringPath"/>.
+        /// <para><i>[ES] Crea un wrapper URI desde un <see cref="C_StringPath"/>.</i></para>
+        /// </summary>
+        public C_Uri(C_StringPath stringPath)
+            : this(stringPath?.ToUri() ?? throw new ArgumentNullException(nameof(stringPath)))
+        {
+        }
+
+        public C_Uri(C_Uri? source)
+            : this(source is null ? string.Empty : source.ToString())
+        {
+        }
+
+        #endregion
+
+
+        #region PUBLIC METHODS
+
+        public C_Uri Clone()
+            => new C_Uri(this);
+
         public string Info()
         {
-            StringBuilder result = new StringBuilder();
-            switch (this.Type)
-            {
-                case E_UriType.Web:
-                    result.AppendLine(this.Url.Info());
-                    break;
-                case E_UriType.File:
-                    result.AppendLine($"Type: {this.Type.ToString()}");
-                    result.AppendLine(this.File.Info());
-                    break;
-                default:
-                    result.AppendLine($"Type: {this.Type.ToString()}");
-                    break;
-            }
-            return result.ToString();
+            throw new NotImplementedException();
         }
+
+        #endregion
     }
 }
+

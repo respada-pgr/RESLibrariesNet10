@@ -10,24 +10,25 @@ Librerías genéricas **.NET 10** (C#), reutilizables en distintos proyectos.
 | **Rama** | `dev` |
 | **Solución** | `RESLibrariesNet10.slnx` (raíz del repo) |
 
-## Proyectos
+## Proyectos (orden de compilación)
 
-| Proyecto | Rol |
-|----------|-----|
-| [1_LibraryClasses](../1_LibraryClasses/) | Núcleo de dominio (Id, Entity, Register, …) |
-| [2_LibraryUtils](../2_LibraryUtils/) | Utilidades |
-| [3_LibraryServices](../3_LibraryServices/) | Servicios |
-| **RESLibrariesNet10** (este) | Host WinForms + **Docs de la solución** |
+| # | Proyecto | Rol |
+|---|----------|-----|
+| 1 | [1_LibraryClasses](../1_LibraryClasses/) | Dominio (Id, Entity, Register, …) |
+| 2 | [2_LibraryHelpers](../2_LibraryHelpers/) | Helpers (File, Text, Url, Time, …) |
+| 3 | [4_LibraryUtils](../4_LibraryUtils/) | Utils / infra (GlobalLogger global, …) |
+| 4 | [3_LibraryServices](../3_LibraryServices/) | Servicios (Crypto, FileService, …) |
+| — | **RESLibrariesNet10** (este) | Host WinForms + Docs de la solución |
 
-## Documentación (este proyecto → carpeta `Docs`)
+## Documentación (`Docs/`)
 
 | Fichero | Contenido |
 |---------|-----------|
-| [Docs/PENDING.md](Docs/PENDING.md) | Backlog de **toda** la solución |
-| [Docs/CONVENTIONS.md](Docs/CONVENTIONS.md) | Nomenclatura y docs XML (global) |
-| [Docs/ARCHITECTURE.md](Docs/ARCHITECTURE.md) | Arquitectura por capítulos (1 / 2 / 3 / host) |
-| [Docs/FOLDER_MAP.md](Docs/FOLDER_MAP.md) | Mapa de carpetas de la solución |
-| [Docs/CHANGELOG.md](Docs/CHANGELOG.md) | Historial por proyecto |
+| [Docs/PENDING.md](Docs/PENDING.md) | Backlog de toda la solución |
+| [Docs/CONVENTIONS.md](Docs/CONVENTIONS.md) | Nomenclatura y docs XML |
+| [Docs/ARCHITECTURE.md](Docs/ARCHITECTURE.md) | Arquitectura por capítulos |
+| [Docs/FOLDER_MAP.md](Docs/FOLDER_MAP.md) | Mapa de carpetas |
+| [Docs/CHANGELOG.md](Docs/CHANGELOG.md) | Historial |
 | [Docs/DEV_PROMPT.md](Docs/DEV_PROMPT.md) | Prompt de desarrollo |
 
 En Visual Studio: **RESLibrariesNet10 → Docs → …**

@@ -1,35 +1,66 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Xml;
 
-namespace _1_LibraryClassesNet10.Event
+namespace _1_LibraryClasses.Event
 {
-    public class C_Exception : Exception
+    public class C_Exception : Exception, I_Exception, I_Infoable
     {
-        private DateTime _dateTime = DateTime.Now;
+        private DateTime _createDate = DateTime.Now;
         private DateTime _utcDateTime = DateTime.UtcNow;
 
-        public DateTime DateTime => this._dateTime;
+        /// <summary>Creation timestamp. / Fecha de creación.</summary>
+        public DateTime CreateDate => this._createDate;
         public DateTime UtcDateTime => this._utcDateTime;
 
-        public Exception ExcepcionOriginal { get { return this.InnerException; } }
+        /// <inheritdoc />
+        E_EventType I_Event.EventType => E_EventType.EXCEPTION;
+
+        /// <inheritdoc />
+        public E_ErrorType Type => E_ErrorType.EXCEPTION;
+
+        /// <inheritdoc />
+        public E_ErrorCode Code => E_ErrorCode.GENERIC;
+
+        /// <summary>Original / inner exception. / Excepción original o interna.</summary>
+        public Exception? OriginalException => this.InnerException ?? (this as Exception);
+
+        /// <summary>Legacy alias. / Alias legado.</summary>
+        public Exception ExcepcionOriginal => this.InnerException;
+
         public string Details { get => GetDetailsException().OuterXml; }
 
         public C_Exception(string message) : base(message) { }
         public C_Exception(string message, Exception innerException) : base(message, innerException) { }
         public C_Exception(Exception innerException) : base(innerException.Message, innerException) { }
 
+        /// <summary>
+        /// Copy constructor (message + inner). CreateDate is new (Exception fields are mostly init-only).
+        /// <para><i>[ES] Constructor de copia (mensaje + inner). CreateDate es nuevo.</i></para>
+        /// </summary>
+        public C_Exception(C_Exception? source)
+            : base(
+                source?.Message ?? string.Empty,
+                source?.InnerException as Exception)
+        {
+            if (source is not null)
+            {
+                this._createDate = source._createDate;
+                this._utcDateTime = source._utcDateTime;
+            }
+        }
+
         public override string ToString()
         {
-            return this._dateTime.ToString() + "> Exception!! " + this.Message + ".";
+            return this._createDate.ToString() + "> Exception!! " + this.Message + ".";
         }
 
         public string Info()
         {
             StringBuilder text = new StringBuilder();
-            string dateTime = this.DateTime.ToString();
+            string dateTime = this.CreateDate.ToString();
             text.AppendLine(dateTime + " > -- EXCEPTION!!! ---------------------------------------------------------------------");
             text.AppendLine(dateTime + " | UTC Datetime: " + this._utcDateTime.ToString() + ".");
             text.AppendLine(dateTime + " | Message: " + (base.Message ?? "") + ".");

@@ -1,48 +1,67 @@
-﻿using _1_LibraryClassesNet10.Enums;
-using _1_LibraryClassesNet10.Time;
 using System;
+using _1_LibraryClasses;
+using _1_LibraryClasses.Result;
 
-namespace _1_LibraryClassesNet10.Event
+namespace _1_LibraryClasses.Event
 {
-    public class C_EventArgs : EventArgs
+    /// <summary>
+    /// EventArgs payload with status and message (for .NET events).
+    /// <para><i>[ES] Carga de EventArgs con estado y mensaje (para eventos .NET).</i></para>
+    /// </summary>
+    public class C_EventArgs : EventArgs, I_Infoable
     {
+        #region PRIVATE FIELDS
+
         private E_ResultStatus _status = E_ResultStatus.ND;
-        private C_DateTime _dateTime = new C_DateTime(System.DateTime.Now);
+        private DateTime _createDate = DateTime.Now;
         private string _message = "";
 
-        public C_DateTime DateTime { get => _dateTime; }
+        #endregion
 
-        public string Message { get => this._message; set => this._message = value; }
+        #region PUBLIC PROPERTIES
+
+        /// <summary>Creation timestamp. / Fecha de creación.</summary>
+        public DateTime CreateDate => _createDate;
+
+        public string Message
+        {
+            get => _message;
+            set => _message = value ?? "";
+        }
 
         public E_ResultStatus Status
         {
-            get => this._status;
+            get => _status;
             set
             {
-                this._status = value;
-                this._dateTime.DateTime = System.DateTime.Now;
+                _status = value;
+                _createDate = DateTime.Now;
             }
         }
 
-        public bool Success
+        public bool IsOK
         {
-            get => this._status == E_ResultStatus.SUCCESS;
+            get => _status == E_ResultStatus.OK;
             set
             {
-                this._status = value ? E_ResultStatus.SUCCESS : E_ResultStatus.ND;
-                this._dateTime.DateTime = System.DateTime.Now;
+                _status = value ? E_ResultStatus.OK : E_ResultStatus.ND;
+                _createDate = DateTime.Now;
             }
         }
 
-        public bool Fail
+        public bool IsFail
         {
-            get => this._status == E_ResultStatus.FAIL;
+            get => _status == E_ResultStatus.FAIL;
             set
             {
-                this._status = value ? E_ResultStatus.FAIL : E_ResultStatus.ND;
-                this._dateTime.DateTime = System.DateTime.Now;
+                _status = value ? E_ResultStatus.FAIL : E_ResultStatus.ND;
+                _createDate = DateTime.Now;
             }
         }
+
+        #endregion
+
+        #region CONSTRUCTORS
 
         public C_EventArgs()
         {
@@ -50,31 +69,49 @@ namespace _1_LibraryClassesNet10.Event
 
         public C_EventArgs(string message, E_ResultStatus status = E_ResultStatus.ND)
         {
-            this._status = status;
-            this._message = message ?? "";
+            _status = status;
+            _message = message ?? "";
         }
-
 
         public C_EventArgs(C_Error error, string message = null)
         {
-            this._status = E_ResultStatus.FAIL;
-            this._message = message ?? error.Message;
+            _status = E_ResultStatus.FAIL;
+            _message = message ?? error?.Message ?? "";
         }
 
         public C_EventArgs(Exception exception, string message = null)
         {
-            this._status = E_ResultStatus.FAIL;
-            this._message = message ?? exception.Message;
+            _status = E_ResultStatus.FAIL;
+            _message = message ?? exception?.Message ?? "";
         }
+
+        /// <summary>
+        /// Copy constructor. Preserves status, message and CreateDate.
+        /// <para><i>[ES] Constructor de copia. Conserva estado, mensaje y CreateDate.</i></para>
+        /// </summary>
+        public C_EventArgs(C_EventArgs? source)
+        {
+            if (source is null)
+                return;
+            this._status = source._status;
+            this._message = source._message;
+            this._createDate = source._createDate;
+        }
+
+        #endregion
+
+        #region PUBLIC METHODS
+
+        public C_EventArgs Clone()
+            => new C_EventArgs(this);
 
         public string Info()
         {
-            string result = this.DateTime.ToString() + "> " + this.Status.ToString();
-            if (!string.IsNullOrEmpty(this._message))
-                result += ". Message: " + this._message;
-            result += ".";
-
-            return result.ToString();
+            throw new NotImplementedException();
         }
+
+        #endregion
     }
 }
+
+    

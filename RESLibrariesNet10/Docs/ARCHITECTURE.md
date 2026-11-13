@@ -5,7 +5,7 @@ Visión de diseño de la **solución completa**. Cada librería tiene su capítu
 | Proyecto | Responsabilidad |
 |----------|-----------------|
 | **1_LibraryClasses** | Núcleo de dominio: identidad, entidad, registro, permisos, acciones… |
-| **2_LibraryUtils** | Utilidades técnicas (ficheros, texto, logger, JSON, timer) |
+| **2_LibraryHelpers** | Utilidades técnicas (ficheros, texto, logger, JSON, timer) |
 | **3_LibraryServices** | Servicios de aplicación (ficheros, criptografía, …) |
 | **RESLibrariesNet10** | Host WinForms de prueba + documentación de solución |
 
@@ -26,7 +26,7 @@ Decisiones de diseño, estructura y contratos de la librería **1_LibraryClasses
 ├── Interfaces/          # contratos I_*
 ├── Enums/               # E_*
 ├── Base/                # C_Id, C_Entity, C_Register, C_Pagination, …
-├── Event/ Result/ List/ Time/ Url/ Files/   # soporte / helpers (pendiente valorar vs Utils)
+├── Event/ Result/   # soporte; Files/Url/Time/List movidos a 2_LibraryHelpers
 └── Docs/
     ├── ARCHITECTURE.md
     ├── CONVENTIONS.md
@@ -145,13 +145,13 @@ public class C_Configuration : I_Initializable<Guid>
 
 ---
 
-## Capítulo: 2_LibraryUtils
+## Capítulo: 2_LibraryHelpers
 
 Utilidades reutilizables. Sin modelo de dominio propio.
 
-Carpetas actuales: `Converters/`, `FileManager/`, `Logger/`, `TextManager/`, `Timer/`.
+Carpetas actuales: `Converters/`, `File/`, `Logger/`, `Texto/`, `Timer/`.
 
-_(Ampliar cuando se documente el diseño de Utils.)_
+_(Ampliar cuando se documente el diseño de Helpers.)_
 
 ---
 

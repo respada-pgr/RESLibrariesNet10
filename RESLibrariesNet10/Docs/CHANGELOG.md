@@ -4,7 +4,46 @@ Historial de cambios de la solución. Organizado por proyecto.
 
 ---
 
+## 2_LibraryUtils
+
+### 2026-09-24
+- Nuevo proyecto **`2_LibraryUtils`** (orden de compilación 3)
+- **GLogger:** `GLogger`, `GDebugLogger` + modelos (antes en Helpers/Logger)
+- `3_LibraryServices` renombrado a **`3_LibraryServices`**
+
+
+## 2_LibraryHelpers
+
+### 2026-09-23
+- Renombrado proyecto **`2_LibraryUtils` → `2_LibraryHelpers`**
+- Namespaces `_2_LibraryHelpers.*`
+- Logger permanece en Helpers (no movido a Services)
+- Prefijo **`C_Mng_*` → `C_*`**: `C_File`, `C_String`, `C_Text`, `C_StackTrace`
+- Carpetas **`FileManager` → `File`**, **`TextManager` → `Text`** (namespaces alineados)
+- Movidos a **Helpers** desde Classes: `Files/`, `Url/`, `Time/`, `List/` (namespaces `_2_LibraryHelpers.*`)
+- Unificadas **`Files/` → `File/`** (`C_File` + `C_FilePath`)
+- `Event`/`Result`: propiedad `DateTime` pasa a `System.DateTime` (sin dependencia de `C_DateTime`)
+
+---
+
 ## 1_LibraryClasses
+
+### 2026-09-25
+- Movidas desde Helpers (clases **no estáticas**): `C_FilePath`, `C_Uri`/`C_Url`, `C_DateTime`/`C_NullDateTime`, `C_List_String`, `C_JsonConverter`
+- Helpers retiene solo estáticas: `C_Hlp_File`, `C_Hlp_String`/`C_Hlp_Text`, `C_Hlp_Timer`, `C_Hlp_StackTrace`
+
+
+### 2026-09-24
+- Carpeta **`Log/`**: `C_LogLine`, `C_LoggedLine`, `C_Result_Logged`, `C_StackTraceInfo`, `C_LogStore`, `C_LogException`
+- Enums de log en `Enums/`
+- Fachada **`GLogger`** permanece en `2_LibraryUtils/GlobalLogger`
+- `C_StackTrace` → `2_LibraryHelpers/Diagnostics`
+
+
+### 2026-09-23
+- `C_FilePath` → **`C_FilePath`** (sigue en `Files/`; mover a Helpers pendiente por dependencia Classes→Helpers)
+- `C_Uri` / `C_Url` → **`C_Uri`** / **`C_Url`** (`Url/`)
+
 
 ## 2026-09-22
 
@@ -181,7 +220,7 @@ Historial de cambios de la solución. Organizado por proyecto.
 
 ---
 
-# Changelog — 1_LibraryClasses (`_1_LibraryClassesNet10`) — historial previo
+# Changelog — 1_LibraryClasses (`_1_LibraryClasses`) — historial previo
 
 Registro de cambios de diseño, contratos y documentación del proyecto.
 
@@ -300,7 +339,7 @@ Registro de cambios de diseño, contratos y documentación del proyecto.
 
 ---
 
-## 2_LibraryUtils
+## 2_LibraryHelpers
 
 _(sin entradas aún)_
 
