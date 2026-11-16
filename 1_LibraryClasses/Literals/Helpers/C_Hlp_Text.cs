@@ -83,115 +83,18 @@ namespace _1_LibraryClasses
             return string.Join(" ", words);
         }
 
-#endregion
+        #endregion
 
-#region PUBLIC METHODS — words (letters only)
+        #region PUBLIC METHODS — words (letters only)
 
-        /// <summary>
-        /// Extracts letter-only word runs as a <c>string[]</c>.
-        /// <para><i>[ES] Extrae secuencias de solo letras como <c>string[]</c>.</i></para>
-        /// </summary>
-        /// <param name="text">Input text. / Texto de entrada.</param>
-        /// <param name="minWordLength">
-        /// Minimum length of a word to keep (1 = keep single letters).
-        /// <para><i>[ES] Longitud mínima de palabra a conservar (1 = conserva letras sueltas).</i></para>
-        /// </param>
-        /// <example>
-        /// <code>
-        /// string[] words = C_Hlp_String.GetWords("Hello, world!", minWordLength: 1);
-        /// </code>
-        /// </example>
-        public static string[] GetWordsOnlyLetters(string text, int minWordLength = 1)
-        {
-            return GetWordsOnlyLettersList(text, minWordLength).ToArray();
-        }
+        public static C_Word[] GetWords(string text, int minWordLength = 1)
+            => C_Hlp_String.GetWords(text, minWordLength).Select(w => new C_Word(w)).ToArray();
 
-        /// <summary>
-        /// Extracts letter-only word runs (digits are not words here; use <see cref="C_Hlp_String.GetWordList"/> for numbers as units).
-        /// <para><i>[ES] Extrae secuencias de solo letras como <see cref="List{T}"/>.</i></para>
-        /// </summary>
-        public static List<string> GetWordsOnlyLettersList(string text, int minWordLength = 1)
-        {
-            List<string> result = new List<string>();
-            if (string.IsNullOrEmpty(text))
-                return result;
+        public static List<C_Word> GetWordList(string text, int minWordLength = 1)
+            => C_Hlp_String.GetWords(text, minWordLength).Select(w => new C_Word(w)).ToList();
 
-            StringBuilder word = new StringBuilder();
-            int minLen = minWordLength - 1;
 
-            for (int i = 0; i < text.Length; i++)
-            {
-                char c = text[i];
-
-                if (char.IsLetter(c))
-                {
-                    word.Append(c);
-                }
-                else if (word.Length != 0)
-                {
-                    if (word.Length > minLen)
-                        result.Add(word.ToString());
-                    word.Clear();
-                }
-            }
-
-            if (word.Length != 0 && word.Length > minLen)
-                result.Add(word.ToString());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Extracts runs of decimal digits as a <c>string[]</c>.
-        /// <para><i>[ES] Extrae secuencias de dígitos decimales como <c>string[]</c>.</i></para>
-        /// </summary>
-        public static string[] GetWordsOnlyDigits(string text)
-            => GetWordsOnlyDigitsList(text).ToArray();
-
-        /// <summary>
-        /// Extracts runs of decimal digits as a <see cref="List{T}"/>.
-        /// <para><i>[ES] Extrae secuencias de dígitos decimales como <see cref="List{T}"/>.</i></para>
-        /// </summary>
-        public static List<string> GetWordsOnlyDigitsList(string text)
-        {
-            List<string> result = new List<string>();
-            if (string.IsNullOrEmpty(text))
-                return result;
-
-            var digits = new System.Text.StringBuilder();
-            for (int i = 0; i < text.Length; i++)
-            {
-                char c = text[i];
-                if (char.IsDigit(c))
-                {
-                    digits.Append(c);
-                }
-                else if (digits.Length != 0)
-                {
-                    result.Add(digits.ToString());
-                    digits.Clear();
-                }
-            }
-            if (digits.Length != 0)
-                result.Add(digits.ToString());
-            return result;
-        }
-
-        /// <summary>
-        /// Splits text into tokens on non-word characters or underscore (<c>\W|_</c>).
-        /// <para><i>[ES] Parte el texto en tokens por caracteres no-palabra o guion bajo (<c>\W|_</c>).</i></para>
-        /// </summary>
-        /// <remarks>
-        /// Differs from <see cref="C_Hlp_String.GetWords"/>: this uses a regex split and may include empty entries.
-        /// <para><i>[ES] Diferente de <see cref="C_Hlp_String.GetWords"/>: usa split por regex y puede incluir entradas vacías.</i></para>
-        /// </remarks>
-        public static string[] GetTokens(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return Array.Empty<string>();
-
-            return Regex.Split(text, @"\W|_");
-        }
+        
 
 #endregion
 

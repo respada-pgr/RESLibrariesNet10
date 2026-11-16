@@ -15,7 +15,7 @@ namespace _1_LibraryClasses
     /// </summary>
     public static class C_Hlp_String
     {
-#region PUBLIC METHODS — validation
+        #region PUBLIC METHODS — validation
 
         // Digit = one character 0-9
         // Digits = string of only digits
@@ -33,7 +33,7 @@ namespace _1_LibraryClasses
         /// True if non-empty and every character is a decimal digit (no sign, no decimal point).
         /// <para><i>[ES] True si no está vacío y solo hay dígitos (sin signo ni punto decimal).</i></para>
         /// </summary>
-        public static bool IsDigits(string? text)
+        public static bool IsOnlyDigits(string? text)
         {
             if (string.IsNullOrEmpty(text))
                 return false;
@@ -46,78 +46,21 @@ namespace _1_LibraryClasses
         }
 
         /// <summary>
+        /// True if the text represents any number (integer or decimal).
+        /// Same as <see cref="IsDecimal"/> for practical parsing.
+        /// <para><i>[ES] True si representa cualquier número (entero o decimal).</i></para>
+        /// </summary>
+        public static bool IsNumber(string? text)
+            => IsDecimal(text);
+
+        /// <summary>
         /// True if the text is an integer (<see cref="long.TryParse(string, out long)"/>).
         /// Allows optional sign; does not require pure digits only.
         /// <para><i>[ES] True si es un entero parseable. Admite signo opcional.</i></para>
         /// </summary>
-
-        /// <summary>
-        /// True if the text contains at least one decimal digit.
-        /// <para><i>[ES] True si el texto contiene al menos un dígito decimal.</i></para>
-        /// </summary>
-        public static bool ContainsDigit(string? text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return false;
-            for (int i = 0; i < text.Length; i++)
-            {
-                if (IsDigit(text[i]))
-                    return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// True if the text contains at least one letter.
-        /// <para><i>[ES] True si el texto contiene al menos una letra.</i></para>
-        /// </summary>
-        public static bool ContainsLetter(string? text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return false;
-            for (int i = 0; i < text.Length; i++)
-            {
-                if (char.IsLetter(text[i]))
-                    return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// True if the text contains at least one letter or digit.
-        /// <para><i>[ES] True si contiene al menos una letra o un dígito.</i></para>
-        /// </summary>
-        public static bool ContainsLetterOrDigit(string? text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return false;
-            for (int i = 0; i < text.Length; i++)
-            {
-                if (char.IsLetterOrDigit(text[i]))
-                    return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// True if the text contains any whitespace.
-        /// <para><i>[ES] True si el texto contiene algún espacio en blanco.</i></para>
-        /// </summary>
-        public static bool ContainsWhiteSpace(string? text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return false;
-            for (int i = 0; i < text.Length; i++)
-            {
-                if (char.IsWhiteSpace(text[i]))
-                    return true;
-            }
-            return false;
-        }
-
         public static bool IsInteger(string? text)
-            => long.TryParse(text, System.Globalization.NumberStyles.Integer,
-                System.Globalization.CultureInfo.InvariantCulture, out _);
+           => long.TryParse(text, System.Globalization.NumberStyles.Integer,
+               System.Globalization.CultureInfo.InvariantCulture, out _);
 
         /// <summary>
         /// True if the text is a decimal number (not necessarily with a fractional part).
@@ -128,45 +71,13 @@ namespace _1_LibraryClasses
             => decimal.TryParse(text, System.Globalization.NumberStyles.Number,
                 System.Globalization.CultureInfo.InvariantCulture, out _);
 
-        /// <summary>
-        /// True if the text represents any number (integer or decimal).
-        /// Same as <see cref="IsDecimal"/> for practical parsing.
-        /// <para><i>[ES] True si representa cualquier número (entero o decimal).</i></para>
-        /// </summary>
-        public static bool IsNumber(string? text)
-            => IsDecimal(text);
-
-        /// <summary>
-        /// Tries to parse as <see cref="int"/> (invariant).
-        /// <para><i>[ES] Intenta convertir a <see cref="int"/> (invariant).</i></para>
-        /// </summary>
-        public static bool TryToInt(string? text, out int value)
-            => int.TryParse(text, System.Globalization.NumberStyles.Integer,
-                System.Globalization.CultureInfo.InvariantCulture, out value);
-
-        /// <summary>
-        /// Tries to parse as <see cref="long"/> (invariant).
-        /// <para><i>[ES] Intenta convertir a <see cref="long"/> (invariant).</i></para>
-        /// </summary>
-        public static bool TryToLong(string? text, out long value)
-            => long.TryParse(text, System.Globalization.NumberStyles.Integer,
-                System.Globalization.CultureInfo.InvariantCulture, out value);
-
-        /// <summary>
-        /// Tries to parse as <see cref="double"/> (invariant).
-        /// <para><i>[ES] Intenta convertir a <see cref="double"/> (invariant).</i></para>
-        /// </summary>
-        public static bool TryToDouble(string? text, out double value)
-            => double.TryParse(text, System.Globalization.NumberStyles.Float,
-                System.Globalization.CultureInfo.InvariantCulture, out value);
-
-        /// <summary>
-        /// Tries to parse as <see cref="decimal"/> (invariant).
-        /// <para><i>[ES] Intenta convertir a <see cref="decimal"/> (invariant).</i></para>
-        /// </summary>
-        public static bool TryToDecimal(string? text, out decimal value)
-            => decimal.TryParse(text, System.Globalization.NumberStyles.Number,
-                System.Globalization.CultureInfo.InvariantCulture, out value);
+        public static bool IsRomanNumber(string? text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return false;
+            // Simple implementation - you might want to use a more robust Roman numeral validation
+            return Regex.IsMatch(text, @"^(I|V|X|L|C|D|M)+$", RegexOptions.IgnoreCase);
+        }
 
         public static bool IsOnlyLetters(string? text)
         {
@@ -205,10 +116,6 @@ namespace _1_LibraryClasses
             return true;
         }
 
-#endregion
-
-#region PUBLIC METHODS — emoji
-
         public static bool IsEmoji(char character)
         {
             int v = character;
@@ -230,19 +137,7 @@ namespace _1_LibraryClasses
                     return false;
             }
             return any;
-        }
-
-        public static bool ContainsEmoji(string? text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return false;
-            foreach (var rune in text.EnumerateRunes())
-            {
-                if (IsEmojiRune(rune))
-                    return true;
-            }
-            return false;
-        }
+        }        
 
         private static bool IsEmojiRune(Rune rune)
         {
@@ -264,9 +159,141 @@ namespace _1_LibraryClasses
             return false;
         }
 
-#endregion
+        #endregion
 
-#region PUBLIC METHODS — normalize / clean
+        #region PUBLIC METHODS — contains
+
+        /// <summary>
+        /// True if the text contains at least one decimal digit.
+        /// <para><i>[ES] True si el texto contiene al menos un dígito decimal.</i></para>
+        /// </summary>
+        public static bool ContainsOnlyDigits(string? text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return false;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (IsDigit(text[i]))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// True if the text contains at least one letter.
+        /// <para><i>[ES] True si el texto contiene al menos una letra.</i></para>
+        /// </summary>
+        public static bool ContainsLetter(string? text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return false;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (char.IsLetter(text[i]))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// True if the text contains at least one letter or digit.
+        /// <para><i>[ES] True si contiene al menos una letra o un dígito.</i></para>
+        /// </summary>
+        public static bool ContainsOnlyLetterOrDigit(string? text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return false;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (char.IsLetterOrDigit(text[i]))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// True if the text contains any whitespace.
+        /// <para><i>[ES] True si el texto contiene algún espacio en blanco.</i></para>
+        /// </summary>
+        public static bool ContainsWhiteSpace(string? text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return false;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool ContainsEmoji(string? text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return false;
+            foreach (var rune in text.EnumerateRunes())
+            {
+                if (IsEmojiRune(rune))
+                    return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region PUBLIC METHODS — parse
+
+        public static int ToInt(string text)
+            => int.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+
+        public static long ToLong(string text)
+            => long.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+
+        public static double ToDouble(string text)
+            => double.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+
+        public static decimal ToDecimal(string text)
+            => decimal.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+
+        public static C_Word ToWord(string text)
+            => new C_Word(text);
+
+        /// <summary>
+        /// Tries to parse as <see cref="int"/> (invariant).
+        /// <para><i>[ES] Intenta convertir a <see cref="int"/> (invariant).</i></para>
+        /// </summary>
+        public static bool TryToInt(string? text, out int value)
+            => int.TryParse(text, System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
+
+        /// <summary>
+        /// Tries to parse as <see cref="long"/> (invariant).
+        /// <para><i>[ES] Intenta convertir a <see cref="long"/> (invariant).</i></para>
+        /// </summary>
+        public static bool TryToLong(string? text, out long value)
+            => long.TryParse(text, System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
+
+        /// <summary>
+        /// Tries to parse as <see cref="double"/> (invariant).
+        /// <para><i>[ES] Intenta convertir a <see cref="double"/> (invariant).</i></para>
+        /// </summary>
+        public static bool TryToDouble(string? text, out double value)
+            => double.TryParse(text, System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
+
+        /// <summary>
+        /// Tries to parse as <see cref="decimal"/> (invariant).
+        /// <para><i>[ES] Intenta convertir a <see cref="decimal"/> (invariant).</i></para>
+        /// </summary>
+        public static bool TryToDecimal(string? text, out decimal value)
+            => decimal.TryParse(text, System.Globalization.NumberStyles.Number,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
+
+
+        #endregion        
+
+        #region PUBLIC METHODS — normalize / clean
 
         public static string NullToEmpty(string? str)
             => string.IsNullOrEmpty(str) ? string.Empty : str;
@@ -314,16 +341,17 @@ namespace _1_LibraryClasses
             return count;
         }
 
-#endregion
+        #endregion
 
-#region PUBLIC METHODS — word tokens (strings)
+        #region PUBLIC METHODS — Get (words, tokens, numbers)
 
-        /// <summary>
-        /// Extracts word units (letter runs + digit runs) as <c>string[]</c>.
-        /// <para><i>[ES] Extrae unidades palabra (letras + dígitos) como <c>string[]</c>.</i></para>
-        /// </summary>
         public static string[] GetWords(string text, int minWordLength = 1)
-            => GetWordList(text, minWordLength).ToArray();
+        {
+            if (string.IsNullOrEmpty(text))
+                return Array.Empty<string>();
+
+            return text.Trim().Split(new char[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Where(w => w.Length >= minWordLength).ToArray();
+        }
 
         /// <summary>
         /// Extracts word units (letter runs + digit runs) as <see cref="List{T}"/> of strings.
@@ -331,65 +359,87 @@ namespace _1_LibraryClasses
         /// </summary>
         public static List<string> GetWordList(string text, int minWordLength = 1)
         {
-            List<string> result = new List<string>();
             if (string.IsNullOrEmpty(text))
-                return result;
+                return new List<string>();
 
-            StringBuilder word = new StringBuilder();
-            int minLen = minWordLength - 1;
-            bool? isNumber = null;
-
-            for (int i = 0; i < text.Length; i++)
-            {
-                char c = text[i];
-
-                if (char.IsDigit(c))
-                {
-                    if (isNumber == false)
-                    {
-                        if (word.Length > minLen)
-                            result.Add(word.ToString());
-                        word.Clear();
-                    }
-                    isNumber = true;
-                    word.Append(c);
-                }
-                else if (char.IsLetter(c))
-                {
-                    if (isNumber == true)
-                    {
-                        result.Add(word.ToString());
-                        word.Clear();
-                    }
-                    isNumber = false;
-                    word.Append(c);
-                }
-                else if (word.Length != 0)
-                {
-                    string w = word.ToString();
-                    if (int.TryParse(w, out _))
-                        result.Add(w);
-                    else if (word.Length > minLen)
-                        result.Add(w);
-
-                    word.Clear();
-                    isNumber = null;
-                }
-            }
-
-            if (word.Length != 0)
-            {
-                string w = word.ToString();
-                if (int.TryParse(w, out _))
-                    result.Add(w);
-                else if (word.Length > minLen)
-                    result.Add(w);
-            }
-
-            return result;
+            return GetWords(text, minWordLength).ToList();
         }
 
-#endregion
+        public static string[] GetWordsOnlyLetters(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Where(w => IsOnlyLetters(w)).ToArray();
+        
 
+        public static List<string> GetWordsOnlyLettersList(string text, int minWordLength = 1) 
+            => GetWordList(text, minWordLength).Where(w => IsOnlyLetters(w)).ToList();
+
+
+        public static string[] GetWordsOnlyDigits(string text)
+            => GetWordList(text).Where(w => IsOnlyDigits(w)).ToArray();
+
+
+        public static List<string> GetWordsOnlyDigitsList(string text)
+        {
+            return GetWordList(text).Where(w => IsOnlyDigits(w)).ToList();
+        }
+
+        public static string[] GetWordsOnlyLettersAndDigits(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Where(w => IsOnlyLettersAndNumbers(w)).ToArray();
+
+        public static List<string> GetWordsOnlyLettersAndDigitsList(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Where(w => IsOnlyLettersAndNumbers(w)).ToList();
+
+        public static string[] GetWordsOnlyLettersAndDigitsAndUnderscore(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Where(w => IsOnlyLettersAndNumbersAndUnderscore(w)).ToArray();
+
+        public static List<string> GetWordsOnlyLettersAndDigitsAndUnderscoreList(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Where(w => IsOnlyLettersAndNumbersAndUnderscore(w)).ToList();
+
+        public static string[] GetNumbers(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Where(w => IsNumber(w)).ToArray();
+
+        public static List<string> GetNumberList(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Where(w => IsNumber(w)).ToList();
+
+        public static int GetNumWords(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Count;
+
+        public static int GetNumWordsOnlyLetters(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Count(w => IsOnlyLetters(w));
+
+        public static int GetNumWordsOnlyDigits(string text)
+            => GetWordList(text).Count(w => IsOnlyDigits(w));
+
+        public static int GetNumWordsOnlyLettersAndDigits(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Count(w => IsOnlyLettersAndNumbers(w));        
+
+        public static int GetNumWordsOnlyLettersAndDigitsAndUnderscore(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Count(w => IsOnlyLettersAndNumbersAndUnderscore(w));
+
+        public static int GetNumNumbers(string text, int minWordLength = 1)
+            => GetWordList(text, minWordLength).Count(w => IsNumber(w));
+
+        public static string[] GetRomanNumbers(string text)
+            => GetWordList(text).Where(w => IsRomanNumber(w)).ToArray();
+
+        public static List<string> GetRomanNumbersList(string text)
+            => GetWordList(text).Where(w => IsRomanNumber(w)).ToList();
+
+        /// <summary>
+        /// Splits text into tokens on non-word characters or underscore (<c>\W|_</c>).
+        /// <para><i>[ES] Parte el texto en tokens por caracteres no-palabra o guion bajo (<c>\W|_</c>).</i></para>
+        /// </summary>
+        /// <remarks>
+        /// Differs from <see cref="C_Hlp_String.GetWords"/>: this uses a regex split and may include empty entries.
+        /// <para><i>[ES] Diferente de <see cref="C_Hlp_String.GetWords"/>: usa split por regex y puede incluir entradas vacías.</i></para>
+        /// </remarks>
+        public static string[] GetTokens(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return Array.Empty<string>();
+
+            return Regex.Split(text, @"\W|_");
+        }
+
+        #endregion
     }
 }

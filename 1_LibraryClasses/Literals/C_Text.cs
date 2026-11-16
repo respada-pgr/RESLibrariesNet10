@@ -44,6 +44,18 @@ namespace _1_LibraryClasses
 
 #endregion
 
+#region PUBLIC METHODS — factory
+
+        public static C_Text Create(string? value) => new C_Text(value);
+
+        public static C_Text? TryCreate(string? value) => new C_Text(value);
+
+        public static C_Text Create(C_Text? source) => new C_Text(source);
+
+        public static C_Text Create(C_String? source) => new C_Text(source);
+
+#endregion
+
 #region PUBLIC PROPERTIES — words
 
         /// <summary>
@@ -57,23 +69,26 @@ namespace _1_LibraryClasses
         /// </summary>
         public int NumWords => C_Hlp_Word.GetNumWords(this.Value, 1);
 
-#endregion
+        #endregion
 
-#region PUBLIC METHODS — words
+        #region PUBLIC METHODS — words
+
+        public int GetNumWords(string text, int minWordLength = 1)
+            => C_Hlp_String.GetWords(text, minWordLength).Length;
 
         /// <summary>
         /// Word units as <see cref="C_Word"/>[].
         /// <para><i>[ES] Unidades palabra como <see cref="C_Word"/>[].</i></para>
         /// </summary>
-        public C_Word[] GetWords(int minWordLength = 1)
-            => C_Hlp_Word.GetWords(this.Value, minWordLength);
+        public C_Word[] GetWords(string text, int minWordLength = 1)
+            => C_Hlp_Text.GetWords(text, minWordLength);
 
         /// <summary>
         /// Word units as <see cref="List{T}"/> of <see cref="C_Word"/>.
         /// <para><i>[ES] Unidades palabra como lista de <see cref="C_Word"/>.</i></para>
         /// </summary>
-        public List<C_Word> GetWordList(int minWordLength = 1)
-            => C_Hlp_Word.GetWordList(this.Value, minWordLength);
+        public List<C_Word> GetWordList(string text, int minWordLength = 1)
+            => C_Hlp_Text.GetWordList(text, minWordLength);
 
         /// <summary>
         /// Word tokens as raw <c>string[]</c>.
@@ -89,8 +104,6 @@ namespace _1_LibraryClasses
         public List<string> GetWordStringList(int minWordLength = 1)
             => C_Hlp_String.GetWordList(this.Value, minWordLength);
 
-        public int GetNumWords(int minWordLength = 1)
-            => C_Hlp_Word.GetNumWords(this.Value, minWordLength);
 
         public string[] GetWordsOnlyLetters(int minWordLength = 1)
             => C_Hlp_Text.GetWordsOnlyLetters(this.Value, minWordLength);

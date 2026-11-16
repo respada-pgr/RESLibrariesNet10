@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace _1_LibraryClasses
 {
-    public class C_NullDateTime
+    public class C_DateTimeNullable
     {
         private DateTime? _dateTime = null;
 
@@ -107,16 +107,16 @@ namespace _1_LibraryClasses
             get { return this._dateTime != null; }
         }
 
-        public C_NullDateTime()
+        public C_DateTimeNullable()
         {
         }
 
-        public C_NullDateTime(long ticks)
+        public C_DateTimeNullable(long ticks)
         {
             this._dateTime = new DateTime(ticks);
         }
 
-        public C_NullDateTime(Int64? ticks)
+        public C_DateTimeNullable(Int64? ticks)
         {
             if (ticks != null)
                 this._dateTime = new DateTime((long)ticks);
@@ -124,35 +124,36 @@ namespace _1_LibraryClasses
                 this._dateTime = null;
         }
 
-        public C_NullDateTime(string dateTime, CultureInfo cultureInfo = null, DateTimeStyles dateTimeStyles = DateTimeStyles.None)
+        public C_DateTimeNullable(string dateTime, CultureInfo cultureInfo = null, DateTimeStyles dateTimeStyles = DateTimeStyles.None)
         {
             this._dateTime = System.DateTime.ParseExact(dateTime, cultureInfo.DateTimeFormat.FullDateTimePattern, cultureInfo, dateTimeStyles);
         }
 
-        public C_NullDateTime(DateTime dateTime)
+        public C_DateTimeNullable(DateTime dateTime)
         {
             this._dateTime = dateTime;
         }
 
-        public C_NullDateTime(DateTime? dateTime)
+        public C_DateTimeNullable(DateTime? dateTime)
         {
             this._dateTime = dateTime;
         }
 
-        public C_NullDateTime(C_NullDateTime dateTime)
+        public C_DateTimeNullable(C_DateTimeNullable dateTime)
         {
             this._dateTime = dateTime.DateTime;
         }
 
-        public C_NullDateTime(C_DateTime dateTime)
+        public C_DateTimeNullable(C_DateTime dateTime)
         {
             this._dateTime = dateTime.DateTime;
         }
 
-        public void SetNow()
-        {
-            this._dateTime = System.DateTime.Now;
-        }
+        public static C_DateTimeNullable CreateNow()
+            => new C_DateTimeNullable(DateTime.Now);
+
+        public static C_DateTimeNullable CreateUtcNow()
+            => new C_DateTimeNullable(DateTime.UtcNow);
 
         public bool TryLoad(string dateTime, CultureInfo cultureInfo = null, DateTimeStyles dateTimeStyles = DateTimeStyles.None)
         {

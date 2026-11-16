@@ -27,13 +27,15 @@ namespace _1_LibraryClasses
 
         public int Length => this._value.Length;
 
+        public bool IsNull => this._value is null;
+
         public bool IsNullOrEmpty => string.IsNullOrEmpty(this._value);
 
         public bool IsNullOrWhiteSpace => string.IsNullOrWhiteSpace(this._value);
 
-        public bool IsWord => C_Hlp_String.IsWord(this._value);
+        public bool IsWord => C_Hlp_String.IsWord(this._value).IsOK;
 
-        public bool IsDigits => C_Hlp_String.IsDigits(this._value);
+        public bool IsOnlyDigits => C_Hlp_String.IsOnlyDigits(this._value);
 
         public bool IsInteger => C_Hlp_String.IsInteger(this._value);
 
@@ -52,11 +54,11 @@ namespace _1_LibraryClasses
 
         public bool ContainsEmoji => C_Hlp_String.ContainsEmoji(this._value);
 
-        public bool ContainsDigit => C_Hlp_String.ContainsDigit(this._value);
+        public bool ContainsDigit => C_Hlp_String.ContainsOnlyDigits(this._value);
 
         public bool ContainsLetter => C_Hlp_String.ContainsLetter(this._value);
 
-        public bool ContainsLetterOrDigit => C_Hlp_String.ContainsLetterOrDigit(this._value);
+        public bool ContainsLetterOrDigit => C_Hlp_String.ContainsOnlyLetterOrDigit(this._value);
 
         public bool ContainsWhiteSpace => C_Hlp_String.ContainsWhiteSpace(this._value);
 
@@ -77,28 +79,6 @@ namespace _1_LibraryClasses
         {
             this._value = source is null ? string.Empty : source._value;
         }
-
-#endregion
-
-#region PUBLIC METHODS — set / create
-
-        public void Set(string? value)
-            => this._value = value ?? string.Empty;
-
-        public bool TrySet(string? value)
-        {
-            this._value = value ?? string.Empty;
-            return true;
-        }
-
-        public static bool TryCreate(string? value, out C_String result)
-        {
-            result = new C_String(value);
-            return true;
-        }
-
-        public static C_String Create(string? value)
-            => new C_String(value);
 
 #endregion
 
@@ -142,16 +122,7 @@ namespace _1_LibraryClasses
             if (!this.TryToDecimal(out decimal value))
                 throw new FormatException("Value is not a Decimal.");
             return value;
-        }
-
-        public bool TryToWord(out C_Word? word)
-            => C_Word.TryCreate(this._value, out word);
-
-        public C_Word ToWord()
-            => new C_Word(this._value);
-
-        public C_Text ToText()
-            => new C_Text(this._value);
+        }       
 
 #endregion
 
@@ -198,7 +169,7 @@ namespace _1_LibraryClasses
             => this._value;
 
         public string Info()
-            => $"C_String Length={this.Length}, Value=\"{this._value}\"";
+            => $"C_String Length={this.Length}, Value=\"{this._value}\", IsNull={this.IsNull}";
 
 #endregion
 

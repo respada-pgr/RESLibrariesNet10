@@ -1,25 +1,46 @@
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace _1_LibraryClasses
 {
     /// <summary>
     /// A single word: non-empty text with no whitespace inside.
-    /// Does not inherit <see cref="C_String"/>; holds a private <see cref="C_String"/> value.
-    /// <para><i>[ES] Una sola palabra: texto no vacío sin espacios.
-    /// No hereda de <see cref="C_String"/>; encapsula un <see cref="C_String"/> interno.</i></para>
+    /// Does not inherit <see cref="C_String"/>; holds a private <see cref="C_String"/>.
+    /// Factories: <see cref="Create(string)"/> / <see cref="TryCreate(string)"/>.
+    /// Logic: <see cref="C_Hlp_Word"/>.
+    /// <para><i>[ES] Una sola palabra. Factorías Create / TryCreate. Lógica en <see cref="C_Hlp_Word"/>.</i></para>
     /// </summary>
-    /// <example>
-    /// <code>
-    /// var w = new C_Word("Hello");
-    /// bool ok = C_Word.TryCreate("a b", out C_Word? bad); // false
-    /// C_String s = w.AsString;
-    /// </code>
-    /// </example>
     public class C_Word : I_Infoable
     {
 #region PRIVATE FIELDS
 
         private readonly C_String _value = new C_String();
+
+#endregion
+
+#region PUBLIC PROPERTIES
+
+        public string Value {
+            get => this._value.Value; 
+            set => this._value.Value = value;
+        }
+
+        public int Length => this._value.Length;
+        public bool IsNullOrEmpty => this._value.IsNullOrEmpty;
+        public bool IsOnlyDigits => this._value.IsOnlyDigits;
+        public bool IsInteger => this._value.IsInteger;
+        public bool IsDecimal => this._value.IsDecimal;
+        public bool IsNumber => this._value.IsNumber;
+        public bool IsOnlyLetters => this._value.IsOnlyLetters;
+        public bool IsOnlyLettersAndNumbers => this._value.IsOnlyLettersAndNumbers;
+        public bool IsOnlyLettersAndNumbersAndUnderscore
+            => this._value.IsOnlyLettersAndNumbersAndUnderscore;
+        public bool IsEmoji => this._value.IsEmoji;
+        public bool ContainsEmoji => this._value.ContainsEmoji;
+        public bool ContainsDigit => this._value.ContainsDigit;
+        public bool ContainsLetter => this._value.ContainsLetter;
+        public bool ContainsLetterOrDigit => this._value.ContainsLetterOrDigit;
+        public bool ContainsWhiteSpace => this._value.ContainsWhiteSpace;
 
 #endregion
 
@@ -30,129 +51,79 @@ namespace _1_LibraryClasses
         }
 
         /// <summary>
-        /// Creates a word. Throws if <paramref name="value"/> is not a word.
-        /// <para><i>[ES] Crea una palabra. Lanza si no es una palabra válida.</i></para>
+        /// Creates a word. Throws if invalid — prefer <see cref="TryCreate(string)"/>.
         /// </summary>
-        public C_Word(string value)
+        public C_Word(string? value)
         {
-            this.SetWord(value);
+            if (string.IsNullOrEmpty(value))
+                throw new ArgumentException("Value must be a single non-empty word.", nameof(value));
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (char.IsWhiteSpace(value[i]))
+                    throw new ArgumentException("Value must be a single non-empty word without whitespace.", nameof(value));
+            }
+            this._value.Value = value;
         }
 
-        /// <summary>
-        /// Creates a word from a <see cref="C_String"/>. Throws if not a word.
-        /// <para><i>[ES] Crea una palabra desde <see cref="C_String"/>. Lanza si no es válida.</i></para>
-        /// </summary>
         public C_Word(C_String? source)
         {
-            this.SetWord(source?.Value);
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (string.IsNullOrEmpty(source.Value))
+                throw new ArgumentException("Value must be a single non-empty word.", nameof(source.Value));
+
+            for (int i = 0; i < source.Value.Length; i++)
+            {
+                if (char.IsWhiteSpace(source.Value[i]))
+                    throw new ArgumentException("Value must be a single non-empty word without whitespace.", nameof(source.Value));
+            }
+            this._value.Value = source.Value;
         }
 
-        /// <summary>
-        /// Copy constructor. Copies the word if valid; otherwise leaves empty.
-        /// <para><i>[ES] Constructor de copia. Copia si es válida; si no, queda vacío.</i></para>
-        /// </summary>
         public C_Word(C_Word? source)
         {
-            if (source is not null && C_Hlp_String.IsWord(source.Value))
-                this._value.Value = source.Value;
+            if(source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            this.Value = source.Value;
         }
 
-#endregion
+        #endregion
 
-#region PUBLIC PROPERTIES
+        #region PUBLIC METHODS — factory
+        public static C_Word Create(string? text) => new C_Word(text);
 
-        /// <summary>
-        /// Word text. Setter throws if the value is not a single word.
-        /// <para><i>[ES] Texto. El setter lanza si no es una sola palabra.</i></para>
-        /// </summary>
-        public string Value
+        public static C_Word? TryCreate(string? text)
         {
-            get => this._value.Value;
-            set => this.SetWord(value);
-        }
-
-        /// <summary>
-        /// Underlying string container (read-only reference to internal state).
-        /// <para><i>[ES] Contenedor string subyacente (referencia al estado interno).</i></para>
-        /// </summary>
-        public C_String AsString => this._value;
-
-        public int Length => this._value.Length;
-
-        public bool IsNullOrEmpty => this._value.IsNullOrEmpty;
-
-        public bool IsWord => C_Hlp_String.IsWord(this._value.Value);
-
-        public bool IsDigits => C_Hlp_String.IsDigits(this._value.Value);
-
-        public bool IsInteger => C_Hlp_String.IsInteger(this._value.Value);
-
-        public bool IsDecimal => C_Hlp_String.IsDecimal(this._value.Value);
-
-        public bool IsNumber => C_Hlp_String.IsNumber(this._value.Value);
-
-        public bool IsOnlyLetters => C_Hlp_String.IsOnlyLetters(this._value.Value);
-
-        public bool IsOnlyLettersAndNumbers => C_Hlp_String.IsOnlyLettersAndNumbers(this._value.Value);
-
-        public bool IsOnlyLettersAndNumbersAndUnderscore
-            => C_Hlp_String.IsOnlyLettersAndNumbersAndUnderscore(this._value.Value);
-
-        public bool IsEmoji => C_Hlp_String.IsEmoji(this._value.Value);
-
-        public bool ContainsEmoji => C_Hlp_String.ContainsEmoji(this._value.Value);
-
-        public bool ContainsDigit => C_Hlp_String.ContainsDigit(this._value.Value);
-
-        public bool ContainsLetter => C_Hlp_String.ContainsLetter(this._value.Value);
-
-        public bool ContainsLetterOrDigit => C_Hlp_String.ContainsLetterOrDigit(this._value.Value);
-
-        public bool ContainsWhiteSpace => C_Hlp_String.ContainsWhiteSpace(this._value.Value);
-
-#endregion
-
-#region PUBLIC METHODS
-
-        public void SetWord(string? value)
-        {
-            if (!C_Hlp_String.IsWord(value))
-                throw new ArgumentException("Value must be a single non-empty word without whitespace.", nameof(value));
-            this._value.Value = value!;
-        }
-
-        public bool TrySet(string? value)
-        {
-            if (!C_Hlp_String.IsWord(value))
-                return false;
-            this._value.Value = value!;
-            return true;
-        }
-
-        public static bool TryCreate(string? value, out C_Word? word)
-        {
-            if (!C_Hlp_String.IsWord(value))
+            try
             {
-                word = null;
-                return false;
+                return new C_Word(text);
             }
-            word = new C_Word(value!);
-            return true;
+            catch
+            {
+                return null;
+            }
         }
+
+        public static C_Word Create(C_Word? source)
+        {
+            return new C_Word(source);
+        }
+
+#endregion
 
 #region PUBLIC METHODS — TryTo* / To*
 
-        public bool TryToInt(out int value)
-            => C_Hlp_String.TryToInt(this.Value, out value);
-
-        public bool TryToLong(out long value)
-            => C_Hlp_String.TryToLong(this.Value, out value);
-
-        public bool TryToDouble(out double value)
-            => C_Hlp_String.TryToDouble(this.Value, out value);
-
-        public bool TryToDecimal(out decimal value)
-            => C_Hlp_String.TryToDecimal(this.Value, out value);
+        public bool TryToInt(out int value) => int.TryParse(this.Value, System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
+        public bool TryToLong(out long value) => long.TryParse(this.Value, System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
+        public bool TryToDouble(out double value) => double.TryParse(this.Value, System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
+        public bool TryToDecimal(out decimal value) => decimal.TryParse(this.Value, System.Globalization.NumberStyles.Currency,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
 
         public int ToInt()
         {
@@ -181,33 +152,20 @@ namespace _1_LibraryClasses
                 throw new FormatException("Value is not a Decimal.");
             return value;
         }
-
-        public C_String ToCString()
-            => new C_String(this.Value);
-
-        public C_Text ToText()
-            => new C_Text(this.Value);
-
 #endregion
 
-        public C_Word Clone()
-            => new C_Word(this);
+#region PUBLIC METHODS
 
-        public override string ToString()
-            => this._value.Value;
+        public C_Word Clone() => new C_Word(this);
+        public override string ToString() => this._value.Value;
+        public string Info() => this._value.Info();
 
-        public string Info()
-            => $"C_Word IsWord={this.IsWord}, Value=\"{this._value.Value}\"";
+        #endregion
 
-#endregion
+        #region OPERATORS
 
-#region OPERATORS
-
-        public static implicit operator string(C_Word w)
-            => w is null ? string.Empty : w.Value;
-
-        public static explicit operator C_Word(string s)
-            => new C_Word(s);
+        public static implicit operator string(C_Word w) => w is null ? string.Empty : w.Value;
+        public static explicit operator C_Word(string s) => C_Word.Create(s);
 
 #endregion
     }

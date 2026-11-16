@@ -69,6 +69,13 @@ Pulir **1_LibraryClasses** y mantener Utils/Services estables.
 
 ---
 
+## Checkpoint (2026-11-12) — Literals
+
+- [x] Carpeta plana **`1_LibraryClasses/Literals/`** (+ `Helpers/`)
+- [x] Text + Time (y futuros Char/Number) en la misma carpeta
+- [x] Namespace: **`_1_LibraryClasses`**
+- [ ] Añadir `C_Char` / `C_Hlp_Char` y `C_Number` / `C_Hlp_Number` en Literals
+
 ## Alta
 | Tarea | Notas |
 |-------|--------|
