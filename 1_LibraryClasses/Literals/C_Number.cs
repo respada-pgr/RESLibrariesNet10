@@ -110,33 +110,28 @@ namespace _1_LibraryClasses
         /// Tries to create from text; <see langword="null"/> if empty/white-space or not a number.
         /// <para><i>[ES] Intenta crear desde texto; <see langword="null"/> si está vacío o no es número.</i></para>
         /// </summary>
-        public static C_Number? TryCreate(string? text) => C_Hlp_Number.TryCreate(text);
-
-        // ----- instance -----
-
-        public bool TryToInt(out int value)
+        public static C_Number? TryCreate(string? text)
         {
-            C_Result<int> r = C_Hlp_Number.TryToInt(this._value);
-            if (r.IsFail)
-            {
-                value = 0;
-                return false;
-            }
-            value = r.Value;
-            return true;
+            if (!C_Hlp_Number.TryToDecimal(text, out decimal value))
+                return null;
+            return new C_Number(value);
         }
 
-        public bool TryToInt(out int value, out decimal discarded)
-        {
-            C_Result<int> r = C_Hlp_Number.TryToInt(this._value, out discarded);
-            if (r.IsFail)
-            {
-                value = 0;
-                return false;
-            }
-            value = r.Value;
-            return true;
-        }
+        public C_Number Clone() => new C_Number(this);
+
+        public int ToInt() => C_Hlp_Number.ToInt(this._value);
+
+        public long ToLong() => C_Hlp_Number.ToLong(this._value);
+
+        public float ToFloat() => C_Hlp_Number.ToFloat(this._value);
+
+        public double ToDouble() => C_Hlp_Number.ToDouble(this._value);
+
+        public decimal ToDecimal() => this._value;
+
+        public bool TryToInt(out int value) => C_Hlp_Number.TryToInt(this._value, out value);
+
+        public bool TryToInt(out int value, out decimal discarded) => C_Hlp_Number.TryToInt(this._value, out value, out discarded);
 
         public bool TryToLong(out long value)
         {
@@ -180,19 +175,13 @@ namespace _1_LibraryClasses
         public C_Result<float> TryToFloat(out decimal discarded)
             => C_Hlp_Number.TryToFloat(this._value, out discarded);
 
-        public int ToInt() => C_Hlp_Number.ToInt(this._value);
-
-        public long ToLong() => C_Hlp_Number.ToLong(this._value);
-
-        public double ToDouble() => C_Hlp_Number.ToDouble(this._value);
-
-        public float ToFloat() => C_Hlp_Number.ToFloat(this._value);
+        
 
         public C_Result<float> TryToFloat() => C_Hlp_Number.TryToFloat(this._value);
 
-        public decimal ToDecimal() => this._value;
+        
 
-        public C_Number Clone() => new C_Number(this);
+        
 
         public override string ToString() => this._value.ToString();
 

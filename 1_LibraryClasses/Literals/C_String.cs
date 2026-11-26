@@ -33,7 +33,7 @@ namespace _1_LibraryClasses
 
         public bool IsNullOrWhiteSpace => string.IsNullOrWhiteSpace(this._value);
 
-        public bool IsWord => C_Hlp_String.IsWord(this._value).IsOK;
+        public bool IsWord => C_Hlp_String.IsWord(this._value);
 
         public bool IsOnlyDigits => C_Hlp_String.IsOnlyDigits(this._value);
 
@@ -80,53 +80,29 @@ namespace _1_LibraryClasses
             this._value = source is null ? string.Empty : source._value;
         }
 
-#endregion
+        #endregion
 
-#region PUBLIC METHODS — TryTo* / To*
+        #region PUBLIC METHODS — To* / TryTo*
 
-        public bool TryToInt(out int value)
-            => C_Hlp_String.TryToInt(this._value, out value);
+        public int ToInt() => C_Hlp_Number.ToInt(this._value);
 
-        public bool TryToLong(out long value)
-            => C_Hlp_String.TryToLong(this._value, out value);
+        public long ToLong() => C_Hlp_Number.ToLong(this._value);
 
-        public bool TryToDouble(out double value)
-            => C_Hlp_String.TryToDouble(this._value, out value);
+        public double ToDouble() => C_Hlp_Number.ToDouble(this._value);
 
-        public bool TryToDecimal(out decimal value)
-            => C_Hlp_String.TryToDecimal(this._value, out value);
+        public decimal ToDecimal() => C_Hlp_Number.ToDecimal(this._value);
 
-        public int ToInt()
-        {
-            if (!this.TryToInt(out int value))
-                throw new FormatException("Value is not an Int32.");
-            return value;
-        }
+        public bool TryToInt(out int value) => C_Hlp_Number.TryToInt(this._value, out value);
 
-        public long ToLong()
-        {
-            if (!this.TryToLong(out long value))
-                throw new FormatException("Value is not an Int64.");
-            return value;
-        }
+        public bool TryToLong(out long value) => C_Hlp_Number.TryToLong(this._value, out value);
 
-        public double ToDouble()
-        {
-            if (!this.TryToDouble(out double value))
-                throw new FormatException("Value is not a Double.");
-            return value;
-        }
+        public bool TryToDouble(out double value) => C_Hlp_Number.TryToDouble(this._value, out value);
 
-        public decimal ToDecimal()
-        {
-            if (!this.TryToDecimal(out decimal value))
-                throw new FormatException("Value is not a Decimal.");
-            return value;
-        }       
+        public bool TryToDecimal(out decimal value) => C_Hlp_Number.TryToDecimal(this._value, out value);        
 
-#endregion
+        #endregion
 
-#region PUBLIC METHODS — transform in-place
+        #region PUBLIC METHODS — transform in-place
 
         public C_String NullToEmpty()
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using _1_LibraryClasses.Result;
 
 namespace _1_LibraryClasses
@@ -172,6 +173,8 @@ namespace _1_LibraryClasses
             return new C_NumberNullable(value);
         }
 
+        public C_NumberNullable Clone() => new C_NumberNullable(this);
+
         // ----- instance -----
 
         public bool TryToInt(out int value)
@@ -280,15 +283,15 @@ namespace _1_LibraryClasses
 
 
         public C_String ToCString()
-            => new C_String(this._value is null ? string.Empty : C_Hlp_Number.FromDecimal(this._value.Value));
+            => new C_String(this._value is null ? string.Empty : this._value.Value.ToString(CultureInfo.InvariantCulture));
 
         public C_Text ToText()
-            => new C_Text(this._value is null ? string.Empty : C_Hlp_Number.FromDecimal(this._value.Value));
+            => new C_Text(this._value is null ? string.Empty : this._value.Value.ToString(CultureInfo.InvariantCulture));
 
-        public C_NumberNullable Clone() => new C_NumberNullable(this);
+        
 
         public override string ToString()
-            => this._value is null ? string.Empty : C_Hlp_Number.FromDecimal(this._value.Value);
+            => this._value is null ? string.Empty : this._value.Value.ToString(CultureInfo.InvariantCulture);
 
         public string Info()
             => this.IsNull

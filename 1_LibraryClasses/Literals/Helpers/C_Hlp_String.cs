@@ -1,5 +1,7 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -137,7 +139,7 @@ namespace _1_LibraryClasses
                     return false;
             }
             return any;
-        }        
+        }
 
         private static bool IsEmojiRune(Rune rune)
         {
@@ -241,57 +243,15 @@ namespace _1_LibraryClasses
 
         #endregion
 
-        #region PUBLIC METHODS — parse
+        #region PUBLIC METHODS — format
 
-        public static int ToInt(string text)
-            => int.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+        public static string From(int value) => value.ToString(CultureInfo.InvariantCulture);
+        public static string From(long value) => value.ToString(CultureInfo.InvariantCulture);
+        public static string From(float value) => value.ToString(CultureInfo.InvariantCulture);
+        public static string From(double value) => value.ToString(CultureInfo.InvariantCulture);
+        public static string From(decimal value) => value.ToString(CultureInfo.InvariantCulture);
 
-        public static long ToLong(string text)
-            => long.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
-
-        public static double ToDouble(string text)
-            => double.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
-
-        public static decimal ToDecimal(string text)
-            => decimal.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
-
-        public static C_Word ToWord(string text)
-            => new C_Word(text);
-
-        /// <summary>
-        /// Tries to parse as <see cref="int"/> (invariant).
-        /// <para><i>[ES] Intenta convertir a <see cref="int"/> (invariant).</i></para>
-        /// </summary>
-        public static bool TryToInt(string? text, out int value)
-            => int.TryParse(text, System.Globalization.NumberStyles.Integer,
-                System.Globalization.CultureInfo.InvariantCulture, out value);
-
-        /// <summary>
-        /// Tries to parse as <see cref="long"/> (invariant).
-        /// <para><i>[ES] Intenta convertir a <see cref="long"/> (invariant).</i></para>
-        /// </summary>
-        public static bool TryToLong(string? text, out long value)
-            => long.TryParse(text, System.Globalization.NumberStyles.Integer,
-                System.Globalization.CultureInfo.InvariantCulture, out value);
-
-        /// <summary>
-        /// Tries to parse as <see cref="double"/> (invariant).
-        /// <para><i>[ES] Intenta convertir a <see cref="double"/> (invariant).</i></para>
-        /// </summary>
-        public static bool TryToDouble(string? text, out double value)
-            => double.TryParse(text, System.Globalization.NumberStyles.Float,
-                System.Globalization.CultureInfo.InvariantCulture, out value);
-
-        /// <summary>
-        /// Tries to parse as <see cref="decimal"/> (invariant).
-        /// <para><i>[ES] Intenta convertir a <see cref="decimal"/> (invariant).</i></para>
-        /// </summary>
-        public static bool TryToDecimal(string? text, out decimal value)
-            => decimal.TryParse(text, System.Globalization.NumberStyles.Number,
-                System.Globalization.CultureInfo.InvariantCulture, out value);
-
-
-        #endregion        
+        #endregion
 
         #region PUBLIC METHODS — normalize / clean
 
@@ -367,9 +327,9 @@ namespace _1_LibraryClasses
 
         public static string[] GetWordsOnlyLetters(string text, int minWordLength = 1)
             => GetWordList(text, minWordLength).Where(w => IsOnlyLetters(w)).ToArray();
-        
 
-        public static List<string> GetWordsOnlyLettersList(string text, int minWordLength = 1) 
+
+        public static List<string> GetWordsOnlyLettersList(string text, int minWordLength = 1)
             => GetWordList(text, minWordLength).Where(w => IsOnlyLetters(w)).ToList();
 
 
@@ -410,7 +370,7 @@ namespace _1_LibraryClasses
             => GetWordList(text).Count(w => IsOnlyDigits(w));
 
         public static int GetNumWordsOnlyLettersAndDigits(string text, int minWordLength = 1)
-            => GetWordList(text, minWordLength).Count(w => IsOnlyLettersAndNumbers(w));        
+            => GetWordList(text, minWordLength).Count(w => IsOnlyLettersAndNumbers(w));
 
         public static int GetNumWordsOnlyLettersAndDigitsAndUnderscore(string text, int minWordLength = 1)
             => GetWordList(text, minWordLength).Count(w => IsOnlyLettersAndNumbersAndUnderscore(w));
